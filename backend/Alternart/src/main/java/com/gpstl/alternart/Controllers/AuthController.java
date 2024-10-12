@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -21,22 +24,30 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<Map<String, Object>> signup(@RequestBody SignupRequest signupRequest) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            userService.createUser(signupRequest);
-            return ResponseEntity.ok("User registered successfully");
+            Long userId = userService.createUser(signupRequest);
+            response.put("userId", userId);
+            response.put("message", "User registered successfully");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
     @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestBody SignInRequest signInRequest) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody SignInRequest signInRequest) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            userService.login(signInRequest);
-            return ResponseEntity.ok("User logged in successfully");
+            Long userId = userService.login(signInRequest);
+            response.put("userId", userId);
+            response.put("message", "User logged successfully");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 }
