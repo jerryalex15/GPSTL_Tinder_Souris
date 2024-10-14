@@ -30,7 +30,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody SignInRequest signInRequest) {
         try {
             userService.login(signInRequest);
