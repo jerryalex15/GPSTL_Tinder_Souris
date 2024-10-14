@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { login } from "@/app/api";
 
 export default function Login() {
   const router = useRouter();
@@ -34,11 +35,15 @@ export default function Login() {
     return true;
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (validateForm()) {
-      // Logic to handle successful login
-      console.log("Form submitted successfully");
+      try {
+        await login(username, password);
+        console.log("User logged in successfully");
+      } catch (e) {
+        setError("Le nom d'utilisateur ou le mot de passe est incorrect");
+      }
     }
   };
 

@@ -11,10 +11,11 @@ import {
   Select,
   InputLabel,
   FormControl,
-  FormHelperText
+  FormHelperText, SelectChangeEvent
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { register, Role } from "@/app/api";
 
 export default function Register() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState<Role>("student");
   
   // States for errors
   const [errors, setErrors] = useState({
@@ -71,16 +72,20 @@ export default function Register() {
     return formIsValid;
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (validateForm()) {
-      // Logic to handle successful registration
-      console.log("Form submitted successfully");
+      try {
+        await register(username, email, password, role);
+        console.log("User registered successfully");
+      } catch (e) {
+        setErrors({ ...errors, username: "Ce nom d'utilisateur existe déjà" });
+      }
     }
   };
 
-  const handleRoleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setRole(event.target.value as string);
+  const handleRoleChange = (event: SelectChangeEvent<Role>) => {
+    setRole(event.target.value as Role);
   };
 
   return (

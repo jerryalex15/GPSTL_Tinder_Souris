@@ -78,7 +78,10 @@ export async function login(username: string, password: string): Promise<void> {
   localStorage.setItem("bearer", token);
 }
 
-export async function register(username: string, email: string, password: string, role: "student"): Promise<void> {
+export type Role = "student" | "company" | "cfa";
+export async function register(
+  username: string, email: string, password: string, role: Role
+): Promise<void> {
   let res = await fetch(`${API_URL}/auth/signup`, {
     method: "POST",
     headers: {
