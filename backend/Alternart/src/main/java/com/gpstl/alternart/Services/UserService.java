@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,7 +19,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public void createUser(SignupRequest signupRequest) {
+    public Long createUser(SignupRequest signupRequest) {
         if (userRepository.findByUsername(signupRequest.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
@@ -34,11 +33,12 @@ public class UserService {
         user.setEmail(signupRequest.getEmail());
         user.setRole(signupRequest.getRole()); // Default role
 
-        userRepository.save(user);
+        user = userRepository.save(user);
+        return user.getId();
     }
 
 
-    public void login(SignInRequest signInRequest) {
+    public Long login(SignInRequest signInRequest) {
         Optional<User> user = userRepository.findByUsername(signInRequest.getUsername());
         if (user.isEmpty()) {
             throw new RuntimeException("User not found");
@@ -47,5 +47,7 @@ public class UserService {
         if (!passwordEncoder.matches(signInRequest.getPassword(), user.get().getPasswordHash())) {
             throw new RuntimeException("Invalid password");
         }
+
+        return user.get().getId();
     }
 }
