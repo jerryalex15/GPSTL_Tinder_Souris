@@ -78,6 +78,7 @@ export default function Register() {
       try {
         await register(username, email, password, role);
         console.log("User registered successfully");
+        router.push("/");
       } catch (e) {
         setErrors({ ...errors, username: "Ce nom d'utilisateur existe déjà" });
       }
@@ -157,16 +158,18 @@ export default function Register() {
               </Select>
               <FormHelperText>{errors.role}</FormHelperText>
             </FormControl>
+            <div className="flex justify-between space-x-2">
+              <Button variant="outlined" onClick={() => router.push('/login')}
+                      style={{ borderColor: '#4e342e', color: '#4e342e' }}>
+                Déjà un compte ? Se connecter
+              </Button>
+              <Button variant="contained" color="primary" type="submit"
+                      style={{ backgroundColor: '#ff8a65', color: '#fff' }}>
+                S'inscrire
+              </Button>
+            </div>
           </form>
         </CardContent>
-        <CardActions style={{ justifyContent: 'space-between', padding: '16px' }}>
-          <Button variant="outlined" onClick={() => router.push('/login')} style={{ borderColor: '#4e342e', color: '#4e342e' }}>
-            Déjà un compte ? Se connecter
-          </Button>
-          <Button variant="contained" color="primary" type="submit" style={{ backgroundColor: '#ff8a65', color: '#fff' }}>
-            S'inscrire
-          </Button>
-        </CardActions>
       </Card>
     </div>
   );
