@@ -5,7 +5,7 @@ export function getToken(): string | null {
   return typeof window !== "undefined" && window.localStorage.getItem("bearer") || null;
 }
 
-const API_URL = `http://${typeof window !== "undefined" ? window.location.hostname : "localhost"}:8080`;
+const API_URL = 'http://localhost:8080/';
 
 async function fetchWithAuth(url: string, init: RequestInit = {}): Promise<Response> {
   let token = getToken();
