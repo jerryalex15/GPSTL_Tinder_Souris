@@ -1,6 +1,7 @@
 package com.gpstl.alternart.Dto;
 
 import lombok.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -13,4 +14,6 @@ public class StudentDTO {
     private String videoPresentationLink;
     private String portfolioLink;
     private String keySkills;
+    private List<Long> categoryIds;
+
 }

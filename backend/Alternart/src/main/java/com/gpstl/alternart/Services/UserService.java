@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    private StudentService studentService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -34,6 +36,9 @@ public class UserService {
         user.setRole(signupRequest.getRole()); // Default role
 
         user = userRepository.save(user);
+        if (Objects.equals(user.getRole(), "student")){
+            // Create a student
+        }
         return user.getId();
     }
 

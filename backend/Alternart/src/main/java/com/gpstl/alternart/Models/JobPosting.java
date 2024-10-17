@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "job_postings")
@@ -30,4 +31,16 @@ public class JobPosting {
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @ManyToMany
+    @JoinTable(
+            name = "job_posting_categories",
+            joinColumns = @JoinColumn(name = "job_posting_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories;
+
+    public JobPosting(Long jobPostingId) {
+        this.id = jobPostingId;
+    }
 }

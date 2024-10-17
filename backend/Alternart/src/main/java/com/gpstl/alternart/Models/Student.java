@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "students")
@@ -29,4 +30,17 @@ public class Student {
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "student_categories",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories;
+
+    public Student(Long studentId) {
+        this.id = studentId;
+    }
 }

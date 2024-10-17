@@ -75,7 +75,8 @@ public class StudentService {
                 student.getCvLink(),
                 student.getVideoPresentationLink(),
                 student.getPortfolioLink(),
-                student.getKeySkills()
+                student.getKeySkills(),
+                student.getCategories() == null ? null : student.getCategories().stream().map(category -> category.getId()).collect(Collectors.toList())
         );
     }
 
@@ -86,13 +87,14 @@ public class StudentService {
 
         // Créer et retourner l'instance de Student
         return new Student(
-                null, // ID will be generated
+                null, // L'ID sera généré automatiquement
                 user, // Utiliser l'instance de User récupérée
                 studentDTO.getCvLink(),
                 studentDTO.getVideoPresentationLink(),
                 studentDTO.getPortfolioLink(),
                 studentDTO.getKeySkills(),
-                user.getCreatedAt()
+                user.getCreatedAt() ,
+                null // Ne pas définir les catégories pour le moment
         );
     }
 }

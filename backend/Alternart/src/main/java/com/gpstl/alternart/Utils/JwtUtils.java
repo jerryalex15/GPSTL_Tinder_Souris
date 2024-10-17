@@ -25,15 +25,15 @@ public class JwtUtils {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    // Generate JWT token
     public String generateJwtToken(String username) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(username) // 'sub' claim
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
+
 
     // Get username from JWT token
     public String getUserNameFromJwtToken(String token) {
