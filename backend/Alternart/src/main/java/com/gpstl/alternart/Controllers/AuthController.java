@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -61,6 +62,9 @@ public class AuthController {
 
             response.put("token", jwt);
             response.put("message", "User logged in successfully");
+            // also return the user id
+            Optional<Long> userId = userService.getIdOfUser(signInRequest.getUsername());
+            userId.ifPresentOrElse(id -> response.put("userId", id), () -> response.put("error", "User not found"));
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
             response.put("error", "Invalid username or password");

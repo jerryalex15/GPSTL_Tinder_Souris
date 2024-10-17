@@ -2,6 +2,7 @@ package com.gpstl.alternart.Dto;
 
 import lombok.*;
 import java.util.List;
+import jakarta.annotation.Nonnull;
 
 @Data
 @NoArgsConstructor
@@ -9,6 +10,7 @@ import java.util.List;
 public class StudentDTO {
 
     private Long id;
+    @Nonnull
     private Long userId;
     private String cvLink;
     private String videoPresentationLink;

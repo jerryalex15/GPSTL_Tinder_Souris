@@ -1,9 +1,11 @@
 package com.gpstl.alternart.Controllers;
 
+import com.gpstl.alternart.Dto.JobPostingDTO;
+import com.gpstl.alternart.Dto.StudentDTO;
 import com.gpstl.alternart.Models.JobPosting;
 import com.gpstl.alternart.Models.Student;
-import com.gpstl.alternart.Services.MatchingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.gpstl.alternart.Services.MatchingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -22,8 +24,8 @@ public class MatchingController {
      * @return A list of matching job postings.
      */
     @GetMapping("/student/{studentId}/jobs")
-    public ResponseEntity<List<JobPosting>> getMatchingJobs(@PathVariable Long studentId) {
-        List<JobPosting> matches = matchingService.findMatchingJobPostings(studentId);
+    public ResponseEntity<List<JobPostingDTO>> getMatchingJobs(@PathVariable Long studentId) {
+        List<JobPostingDTO> matches = matchingService.findMatchingJobPostings(studentId);
         return ResponseEntity.ok(matches);
     }
 
@@ -34,8 +36,8 @@ public class MatchingController {
      * @return A list of matching students.
      */
     @GetMapping("/job/{jobPostingId}/students")
-    public ResponseEntity<List<Student>> getMatchingStudents(@PathVariable Long jobPostingId) {
-        List<Student> matches = matchingService.findMatchingStudents(jobPostingId);
+    public ResponseEntity<List<StudentDTO>> getMatchingStudents(@PathVariable Long jobPostingId) {
+        List<StudentDTO> matches = matchingService.findMatchingStudents(jobPostingId);
         return ResponseEntity.ok(matches);
     }
 }

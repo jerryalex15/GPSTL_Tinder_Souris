@@ -17,7 +17,7 @@ public class JobPosting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
@@ -32,7 +32,7 @@ public class JobPosting {
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "job_posting_categories",
             joinColumns = @JoinColumn(name = "job_posting_id"),
@@ -40,7 +40,4 @@ public class JobPosting {
     )
     private Set<Category> categories;
 
-    public JobPosting(Long jobPostingId) {
-        this.id = jobPostingId;
-    }
 }

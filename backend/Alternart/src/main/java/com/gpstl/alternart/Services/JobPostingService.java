@@ -1,3 +1,4 @@
+// JobPostingService.java
 package com.gpstl.alternart.Services;
 
 import com.gpstl.alternart.Dto.JobPostingRequest;
@@ -9,6 +10,7 @@ import com.gpstl.alternart.Repositories.CategoryRepository;
 import com.gpstl.alternart.Repositories.CompanyRepository;
 import com.gpstl.alternart.Repositories.JobPostingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,19 +33,20 @@ public class JobPostingService {
     public JobPostingResponse createJobPosting(JobPostingRequest jobPostingRequest) {
         // Validate company
         Company company = companyRepository.findById(jobPostingRequest.getCompanyId())
-                .orElseThrow(() -> new NoSuchElementException("Company not found with ID: " + jobPostingRequest.getCompanyId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found with ID: " + jobPostingRequest.getCompanyId()));
 
         // Fetch categories
         Set<Category> categories = new HashSet<>();
         if (jobPostingRequest.getCategoryIds() != null && !jobPostingRequest.getCategoryIds().isEmpty()) {
             categories = new HashSet<>(categoryRepository.findAllById(jobPostingRequest.getCategoryIds()));
             if (categories.size() != jobPostingRequest.getCategoryIds().size()) {
-                throw new NoSuchElementException("One or more categories not found");
+                throw new ResourceNotFoundException("One or more categories not found");
             }
         }
 
         // Create JobPosting entity
         JobPosting jobPosting = new JobPosting();
+        jobPosting.setId(null); // Ensure ID is not set
         jobPosting.setCompany(company);
         jobPosting.setPositionTitle(jobPostingRequest.getPositionTitle());
         jobPosting.setDuration(jobPostingRequest.getDuration());
@@ -64,14 +67,14 @@ public class JobPostingService {
 
     public JobPostingResponse getJobPostingById(Long jobPostingId) {
         JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
-                .orElseThrow(() -> new NoSuchElementException("Job Posting not found with ID: " + jobPostingId));
+                .orElseThrow(() -> new ResourceNotFoundException("Job Posting not found with ID: " + jobPostingId));
         return mapToResponse(jobPosting);
     }
 
     @Transactional
     public JobPostingResponse updateJobPosting(Long jobPostingId, JobPostingRequest jobPostingRequest) {
         JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
-                .orElseThrow(() -> new NoSuchElementException("Job Posting not found with ID: " + jobPostingId));
+                .orElseThrow(() -> new ResourceNotFoundException("Job Posting not found with ID: " + jobPostingId));
 
         // Ensure the company is the owner (optional, based on your security implementation)
         if (!jobPosting.getCompany().getId().equals(jobPostingRequest.getCompanyId())) {
@@ -88,7 +91,7 @@ public class JobPostingService {
         if (jobPostingRequest.getCategoryIds() != null && !jobPostingRequest.getCategoryIds().isEmpty()) {
             categories = new HashSet<>(categoryRepository.findAllById(jobPostingRequest.getCategoryIds()));
             if (categories.size() != jobPostingRequest.getCategoryIds().size()) {
-                throw new NoSuchElementException("One or more categories not found");
+                throw new ResourceNotFoundException("One or more categories not found");
             }
         }
         jobPosting.setCategories(categories);
@@ -100,7 +103,7 @@ public class JobPostingService {
     @Transactional
     public void deleteJobPosting(Long jobPostingId) {
         JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
-                .orElseThrow(() -> new NoSuchElementException("Job Posting not found with ID: " + jobPostingId));
+                .orElseThrow(() -> new ResourceNotFoundException("Job Posting not found with ID: " + jobPostingId));
         jobPostingRepository.delete(jobPosting);
     }
 
@@ -120,5 +123,11 @@ public class JobPostingService {
         response.setCategories(categoryResponses);
 
         return response;
+    }
+
+    public Long getCompanyID(Long companyUserID) {
+        return companyRepository.findByUser_Id(companyUserID)
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found with User ID: " + companyUserID))
+                .getId();
     }
 }

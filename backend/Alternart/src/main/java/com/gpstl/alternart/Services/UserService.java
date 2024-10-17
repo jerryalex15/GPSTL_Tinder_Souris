@@ -16,7 +16,6 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    private StudentService studentService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -36,9 +35,6 @@ public class UserService {
         user.setRole(signupRequest.getRole()); // Default role
 
         user = userRepository.save(user);
-        if (Objects.equals(user.getRole(), "student")){
-            // Create a student
-        }
         return user.getId();
     }
 
@@ -54,5 +50,10 @@ public class UserService {
         }
 
         return user.get().getId();
+    }
+
+    public Optional<Long> getIdOfUser(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.map(User::getId);
     }
 }

@@ -26,6 +26,10 @@ public class JobPostingController {
     @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<JobPostingResponse> createJobPosting(@RequestBody JobPostingRequest jobPostingRequest) {
         try {
+            // id of the company creating the job posting, need to get it using the userid
+            Long company_UserID = jobPostingRequest.getCompanyId();
+            Long companyID = jobPostingService.getCompanyID(company_UserID);
+            jobPostingRequest.setCompanyId(companyID);
             JobPostingResponse response = jobPostingService.createJobPosting(jobPostingRequest);
             return ResponseEntity.ok(response);
         } catch (NoSuchElementException e) {
