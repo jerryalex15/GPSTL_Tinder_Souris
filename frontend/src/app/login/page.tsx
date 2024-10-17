@@ -41,6 +41,7 @@ export default function Login() {
       try {
         await login(username, password);
         console.log("User logged in successfully");
+        router.push("/");
       } catch (e) {
         setError("Le nom d'utilisateur ou le mot de passe est incorrect");
       }
@@ -79,16 +80,16 @@ export default function Login() {
               required
             />
             {error && <FormHelperText error>{error}</FormHelperText>}
+            <div className="flex justify-between space-x-2">
+              <Button variant="outlined" onClick={() => router.push('/register')} style={{ borderColor: '#4e342e', color: '#4e342e' }}>
+                Pas encore inscrit ? S'inscrire
+              </Button>
+              <Button variant="contained" color="primary" type="submit" style={{ backgroundColor: '#ff8a65', color: '#fff' }}>
+                Se connecter
+              </Button>
+            </div>
           </form>
         </CardContent>
-        <CardActions className="justify-between p-4">
-          <Button variant="outlined" onClick={() => router.push('/register')} style={{ borderColor: '#4e342e', color: '#4e342e' }}>
-            Pas encore inscrit ? S'inscrire
-          </Button>
-          <Button variant="contained" color="primary" type="submit" style={{ backgroundColor: '#ff8a65', color: '#fff' }}>
-            Se connecter
-          </Button>
-        </CardActions>
       </Card>
     </div>
   );
