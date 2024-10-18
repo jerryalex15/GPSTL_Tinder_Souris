@@ -1,0 +1,14 @@
+{
+    "configuration" : [
+        {
+            "type": "java",
+            "name": "Alternart",
+            "request": "launch",
+            "mainClass": "com.alternart.AlternartApplication",
+            "projectName": "Alternart",
+            "args": "--spring.profiles.active=local",
+            "console" : "internalConsole",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
