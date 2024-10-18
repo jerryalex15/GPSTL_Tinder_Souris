@@ -4,46 +4,34 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Table(name = "students")
-@Getter
-@Setter
 @ToString
 @RequiredArgsConstructor
+@Setter
+@Getter
 @AllArgsConstructor
-public class Student {
+@Entity
+@Table(name = "categories")
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false, unique = true)
+    private String name;
 
-    private String cvLink;
-    private String videoPresentationLink;
-    private String portfolioLink;
+    // Constructors, Getters, Setters
 
-    @Column(length = 1000)
-    private String keySkills;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-
-    @ManyToMany
-    @JoinTable(
-            name = "student_categories",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
+    @ManyToMany(mappedBy = "categories")
     @ToString.Exclude
-    private Set<Category> categories;
+    private Set<Student> students;
+
+    @ManyToMany(mappedBy = "categories")
+    @ToString.Exclude
+    private Set<JobPosting> jobPostings;
 
     @Override
     public final boolean equals(Object o) {
@@ -52,8 +40,8 @@ public class Student {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Student student = (Student) o;
-        return getId() != null && Objects.equals(getId(), student.getId());
+        Category category = (Category) o;
+        return getId() != null && Objects.equals(getId(), category.getId());
     }
 
     @Override

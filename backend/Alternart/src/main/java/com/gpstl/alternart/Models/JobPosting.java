@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "job_postings")
@@ -16,7 +17,7 @@ public class JobPosting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
@@ -30,4 +31,13 @@ public class JobPosting {
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "job_posting_categories",
+            joinColumns = @JoinColumn(name = "job_posting_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories;
+
 }
