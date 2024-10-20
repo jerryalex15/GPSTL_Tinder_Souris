@@ -44,9 +44,9 @@ export default function Login() {
     event.preventDefault();
     if (validateForm()) {
       try {
-        await login(username, password);
+        const res = await login(username, password);
         console.log("User logged in successfully");
-        router.push("/");
+        router.push("/"+res);
       } catch (e) {
         setError("Le nom d'utilisateur ou le mot de passe est incorrect");
       }
@@ -132,7 +132,10 @@ export default function Login() {
                 required
               />
               {error && <FormHelperText error>{error}</FormHelperText>}
-                <Button variant="contained" color="primary" type="submit"
+                <Button
+                    variant="contained"
+                    color="primary"
+                    type="submit"
                     sx={{backgroundColor: '#673ab7',
                         color: '#fff',
                         marginTop: '16px',
