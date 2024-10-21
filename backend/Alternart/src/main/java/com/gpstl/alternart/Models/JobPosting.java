@@ -1,5 +1,6 @@
 package com.gpstl.alternart.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
