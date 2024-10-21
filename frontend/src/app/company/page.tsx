@@ -7,7 +7,7 @@ import OfferForm from './OfferForm';
 import OfferList from './OfferList';
 import CandidateList from './CandidateList';
 import AppBarComponent from '@/components/AppBarComponent';
-import { getAuthData, getCompanyPostings, JobPosting, usePromise } from "@/app/api";
+import { createJobPosting, getAuthData, getCompanyPostings, JobPosting, usePromise } from "@/app/api";
 
 const emptyOffer: () => Omit<JobPosting, "id"> = () => ({
   companyId: getAuthData()!.userId,
@@ -15,6 +15,7 @@ const emptyOffer: () => Omit<JobPosting, "id"> = () => ({
   duration: "",
   positionTitle: "",
   requiredSkills: "",
+  categories: [],
 });
 
 const EntreprisePage = () => {
@@ -27,26 +28,15 @@ const EntreprisePage = () => {
   }, [apiOffers]);
   
   const [newOffer, setNewOffer] = useState<Omit<JobPosting, "id">>(emptyOffer);
-  
-  const [candidates, setCandidates] = useState({
-    1: [
-      { id: 1, name: 'Alice Dupont', skills: 'React, JavaScript, CSS' },
-      { id: 2, name: 'Jean Martin', skills: 'Vue, TypeScript, HTML' }
-    ],
-    2: [
-      { id: 3, name: 'Marc Lebrun', skills: 'Photoshop, Figma, UI Design' },
-      { id: 4, name: 'Sophie Durand', skills: 'Illustrator, XD, Prototyping' }
-    ]
-  });
 
   const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
   const [isCreatingOffer, setIsCreatingOffer] = useState(false); // Nouvel état pour gérer l'affichage du formulaire
 
   const handleAddOffer = () => {
     if (Object.entries(newOffer).every(([, value]) => value)) {
-      const newId = offers.length + 1;
+      createJobPosting(newOffer);
+      const newId = offers.length + 10000; // BIG
       setOffers([...offers, { id: newId, ...newOffer }]);
-      setCandidates({ ...candidates, [newId]: [] });
       setNewOffer(emptyOffer);
       setIsCreatingOffer(false); // Réinitialiser l'état après l'ajout
     }
@@ -78,7 +68,7 @@ const EntreprisePage = () => {
       ) : selectedOfferId ? (
         <Box>
           <CandidateList 
-            candidates={candidates[selectedOfferId]} 
+            candidates={[]}
             offer={offers.find(offer => offer.id === selectedOfferId)} 
             handleBackToOffers={handleBackToOffers} 
           />

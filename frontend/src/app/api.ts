@@ -118,6 +118,7 @@ export type JobPosting = {
   duration: string,
   requiredSkills: string,
   createdAt: string,
+  categories: number[],
 };
 
 export async function getStudentPostings(): Promise<JobPosting[]> {
@@ -133,6 +134,10 @@ export async function applyToJob(jobId: number): Promise<void> {
 export async function getCompanyPostings(): Promise<JobPosting[]> {
   let myId = getAuthData()!.userId;
   return await fetchWithAuthJSON(`/api/job_postings/company/${myId}`);
+}
+
+export async function createJobPosting(job: Omit<JobPosting, "id">): Promise<JobPosting> {
+  return await fetchWithAuthJSON(`/api/job_postings`, {method: "POST", body: job});
 }
 
 export function usePromise<R>(promise: () => Promise<R>): [boolean, R | null, Error | null] {
