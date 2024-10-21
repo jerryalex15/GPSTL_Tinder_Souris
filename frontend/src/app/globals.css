@@ -3,8 +3,12 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../../img/background.png'); /* Chemin de l'image */
+  background-size: cover; /* Remplir tout l'espace disponible */
+  background-repeat: no-repeat; /* Ne pas répéter l'image */
+  background-position: center; /* Centrer l'image */
 }
+
 
 @layer base {
   :root {
