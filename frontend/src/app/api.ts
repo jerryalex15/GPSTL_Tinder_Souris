@@ -64,12 +64,12 @@ export function logout(router: AppRouterInstance) {
 }
 
 export async function login(username: string, password: string): Promise<void> {
-  let res = await fetch(`${API_URL}/auth/login`, {
+  let res = await fetch(`${API_URL}auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({username, password}),
+    body: JSON.stringify({"username":username, "password":password}),
   });
   if (!res.ok) {
     throw new Error(await res.text());
