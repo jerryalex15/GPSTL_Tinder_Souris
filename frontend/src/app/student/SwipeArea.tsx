@@ -2,9 +2,10 @@ import { Box, IconButton, Typography } from '@mui/material';
 import { motion, useAnimation } from 'framer-motion';
 import { ThumbUp, ThumbDown } from '@mui/icons-material';
 import CardComponent from './CardComponent';
+import { JobPosting } from "@/app/api";
 
 interface SwipeAreaProps {
-  cards: Array<{ id: number; title: string; company: string; image: string; description: string }>;
+  cards: JobPosting[];
   onSwipeLeft: (cardId: number) => void;
   onSwipeRight: (cardId: number) => void;
   swipeDirection: 'left' | 'right' | null;
@@ -67,10 +68,10 @@ const SwipeArea: React.FC<SwipeAreaProps> = ({
           }}
         >
           <CardComponent
-            title={cards[0].title}
-            company={cards[0].company}
-            image={cards[0].image}
-            description={cards[0].description}
+            title={cards[0].positionTitle}
+            company={"Company " + cards[0].companyId}
+            image={'https://i.pinimg.com/736x/50/f9/f6/50f9f6a4ad0471d7c6f5b4a0148fea54.jpg'}
+            description={cards[0].requiredSkills}
             swipeDirection={swipeDirection}
           />
         </motion.div>

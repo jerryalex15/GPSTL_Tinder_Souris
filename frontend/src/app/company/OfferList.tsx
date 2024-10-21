@@ -1,15 +1,11 @@
 import { List, Box, Paper, Typography, Button } from '@mui/material'; // Importation du composant Button
 import OfferItem from './OfferItem';
 import { Key } from 'react';
-
-interface Offer {
-  id: Key | null | undefined;
-  // Add other properties of the offer object here if needed
-}
+import { JobPosting } from "@/app/api";
 
 interface OfferListProps {
-  offers: Offer[];
-  handleSelectOffer: (offer: Offer) => void;
+  offers: JobPosting[];
+  handleSelectOffer: (offer: JobPosting) => void;
   handleCreateNewOffer: () => void;
 }
 

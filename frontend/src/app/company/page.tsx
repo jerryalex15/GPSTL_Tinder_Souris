@@ -1,27 +1,32 @@
 "use client";
 
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 
-type Offer = {
-  id: number;
-  title: string;
-  description: string;
-  educationLevel?: string;
-  sector?: string;
-};
 import { Container, Typography, Box, Button } from '@mui/material';
 import OfferForm from './OfferForm';
 import OfferList from './OfferList';
 import CandidateList from './CandidateList';
 import AppBarComponent from '@/components/AppBarComponent';
+import { getAuthData, getCompanyPostings, JobPosting, usePromise } from "@/app/api";
+
+const emptyOffer: () => Omit<JobPosting, "id"> = () => ({
+  companyId: getAuthData()!.userId,
+  createdAt: "",
+  duration: "",
+  positionTitle: "",
+  requiredSkills: "",
+});
 
 const EntreprisePage = () => {
-  const [offers, setOffers] = useState([
-    { id: 1, title: 'Développeur Front-End', description: 'Recherche alternant avec expérience en React.' },
-    { id: 2, title: 'Designer UX/UI', description: 'Conception des interfaces d’applications web et mobile.' }
-  ]);
+  const [done, apiOffers, error] = usePromise(getCompanyPostings);
+  const [offers, setOffers] = useState<JobPosting[]>([]);
+  useEffect(() => {
+    if (apiOffers) {
+      setOffers(apiOffers);
+    }
+  }, [apiOffers]);
   
-  const [newOffer, setNewOffer] = useState({ title: '', description: '', educationLevel: '', sector: '' });
+  const [newOffer, setNewOffer] = useState<Omit<JobPosting, "id">>(emptyOffer);
   
   const [candidates, setCandidates] = useState({
     1: [
@@ -38,16 +43,16 @@ const EntreprisePage = () => {
   const [isCreatingOffer, setIsCreatingOffer] = useState(false); // Nouvel état pour gérer l'affichage du formulaire
 
   const handleAddOffer = () => {
-    if (newOffer.title && newOffer.description && newOffer.educationLevel && newOffer.sector) {
+    if (Object.entries(newOffer).every(([, value]) => value)) {
       const newId = offers.length + 1;
       setOffers([...offers, { id: newId, ...newOffer }]);
       setCandidates({ ...candidates, [newId]: [] });
-      setNewOffer({ title: '', description: '', educationLevel: '', sector: '' });
+      setNewOffer(emptyOffer);
       setIsCreatingOffer(false); // Réinitialiser l'état après l'ajout
     }
   };
 
-  const handleSelectOffer = (offer: Offer) => {
+  const handleSelectOffer = (offer: JobPosting) => {
     setSelectedOfferId(offer.id);
   };
 

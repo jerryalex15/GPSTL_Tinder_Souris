@@ -50,6 +50,13 @@ public class JobPostingController {
         return ResponseEntity.ok(jobPostings);
     }
 
+    @GetMapping("/company/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<JobPostingResponse>> getJobPostingsByCompanyId(@PathVariable("id") Long companyId) {
+        List<JobPostingResponse> jobPostings = jobPostingService.getAllJobPostingsByCompany(companyId);
+        return ResponseEntity.ok(jobPostings);
+    }
+
     /**
      * Get Job Posting by ID
      * Accessible by any authenticated user

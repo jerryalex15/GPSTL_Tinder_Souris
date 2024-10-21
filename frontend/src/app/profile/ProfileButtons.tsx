@@ -1,4 +1,5 @@
 import { Button, Box } from '@mui/material';
+import { logout } from "@/app/api";
 
 function ProfileButtons({ handleEditProfile, router }) {
   return (
@@ -24,7 +25,7 @@ function ProfileButtons({ handleEditProfile, router }) {
       <Button
         variant="outlined"
         color="secondary"
-        onClick={() => router.push('/login')}
+        onClick={() => { logout(); router.push('/login'); }}
         sx={{
           width: '100%',
           mt: 3,

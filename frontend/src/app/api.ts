@@ -111,7 +111,7 @@ export async function register(
   }
 }
 
-type JobPosting = {
+export type JobPosting = {
   id: number,
   companyId: number,
   positionTitle: string,
@@ -120,9 +120,19 @@ type JobPosting = {
   createdAt: string,
 };
 
-export async function getJobPostings(): Promise<JobPosting[]> {
+export async function getStudentPostings(): Promise<JobPosting[]> {
   let myId = getAuthData()!.userId;
   return await fetchWithAuthJSON(`/api/match/student/${myId}/jobs`);
+}
+
+export async function applyToJob(jobId: number): Promise<void> {
+  let myId = getAuthData()!.userId;
+  return await fetchWithAuthJSON(`/api/applications/apply`, {method: "POST", body: {studentId: myId, jobPostingId: jobId}});
+}
+
+export async function getCompanyPostings(): Promise<JobPosting[]> {
+  let myId = getAuthData()!.userId;
+  return await fetchWithAuthJSON(`/api/job_postings/company/${myId}`);
 }
 
 export function usePromise<R>(promise: () => Promise<R>): [boolean, R | null, Error | null] {
