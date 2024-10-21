@@ -64,7 +64,14 @@ public class AuthController {
             response.put("message", "User logged in successfully");
             // also return the user id
             Optional<Long> userId = userService.getIdOfUser(signInRequest.getUsername());
-            userId.ifPresentOrElse(id -> response.put("userId", id), () -> response.put("error", "User not found"));
+            userId.ifPresentOrElse(id -> response.put("userId", id), () -> {
+                throw new RuntimeException("User not found");
+            });
+
+            Optional<String> userRole = userService.getRoleOfUser(signInRequest.getUsername());
+            userRole.ifPresentOrElse(id -> response.put("role", id), () -> {
+                throw new RuntimeException("User not found");
+            });
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
             response.put("error", "Invalid username or password");

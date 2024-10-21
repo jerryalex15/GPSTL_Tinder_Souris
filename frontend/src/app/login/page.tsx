@@ -46,8 +46,7 @@ export default function Login() {
       try {
         const res = await login(username, password);
         console.log("User logged in successfully");
-        const { id, token, role } = res;
-        router.push("/"+role);
+        router.push(`/${res.role}`);
       } catch (e) {
         setError("Le nom d'utilisateur ou le mot de passe est incorrect");
       }

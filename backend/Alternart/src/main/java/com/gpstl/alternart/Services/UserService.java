@@ -56,4 +56,9 @@ public class UserService {
         Optional<User> user = userRepository.findByUsername(username);
         return user.map(User::getId);
     }
+
+    public Optional<String> getRoleOfUser(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.map(User::getRole);
+    }
 }

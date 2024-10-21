@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Box } from '@mui/material';
 import SwipeArea from './SwipeArea';
 import AppBarComponent from '../../components/AppBarComponent';
+import { getJobPostings, usePromise } from "@/app/api";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -31,6 +32,8 @@ export default function Home() {
       description: 'Créez des illustrations digitales pour des projets ambitieux.',
     },
   ]);
+
+  const [done, jobs, error] = usePromise(getJobPostings);
 
   useEffect(() => {
     setMounted(true);
