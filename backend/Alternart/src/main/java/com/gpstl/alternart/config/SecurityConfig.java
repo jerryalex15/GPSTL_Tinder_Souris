@@ -24,6 +24,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity, enable in production
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/**").permitAll() // Public endpoints
+                        // accept OPTIONS AND ALL METHODS ON EVERY ENDPOINT
+//                       .anyrequest().permitAll()
                         .anyRequest().authenticated() // All other endpoints require authentication
                 )  ;
         return http.build();

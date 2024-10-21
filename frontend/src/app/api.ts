@@ -69,7 +69,8 @@ export async function login(username: string, password: string): Promise<void> {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({"username":username, "password":password}),
+    body: JSON.stringify({ "username": username, "password": password }),
+    // comm
   });
   if (!res.ok) {
     throw new Error(await res.text());
