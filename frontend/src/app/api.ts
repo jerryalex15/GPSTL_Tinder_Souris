@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export function getToken(): string | null {
-  return typeof window !== "undefined" && window.localStorage.getItem("bearer") || null;
+  return typeof window !== "undefined" && window.localStorage.getItem("token") || null;
 }
 
 const API_URL = `http://${typeof window !== "undefined" ? window.location.hostname : "localhost"}:8080`;
@@ -12,24 +12,24 @@ async function fetchWithAuth(url: string, init: RequestInit = {}): Promise<Respo
   if (token === null) {
     throw new Error("No token");
   }
-  let headers = init.headers || {};
+  let headers = init.headers as Record<string, string> || {};
   headers["Authorization"] = `Bearer ${token}`;
   let res = await fetch(API_URL + url, {...init, headers});
   if (res.status === 401) {
-    window.localStorage.removeItem("bearer");
+    window.localStorage.removeItem("token");
   }
   return res;
 }
 
 async function fetchTryWithAuth(url: string, init: RequestInit = {}): Promise<Response> {
   let token = getToken();
-  let headers = init.headers || {};
+  let headers = init.headers as Record<string, string> || {};
   if (token !== null) {
     headers["Authorization"] = `Bearer ${token}`;
   }
   let res = await fetch(API_URL + url, {...init, headers});
   if (token !== null && res.status === 401) {
-    window.localStorage.removeItem("bearer");
+    window.localStorage.removeItem("token");
   }
   return res;
 }
@@ -59,7 +59,7 @@ const fetchWithAuthJSON = fetchJSON(fetchWithAuth);
 const fetchTryWithAuthJSON = fetchJSON(fetchTryWithAuth);
 
 export function logout(router: AppRouterInstance) {
-  window.localStorage.removeItem("bearer");
+  window.localStorage.removeItem("token");
   router.push("/");
 }
 
@@ -75,7 +75,7 @@ export async function login(username: string, password: string): Promise<void> {
     throw new Error(await res.text());
   }
   let token = await res.text();
-  localStorage.setItem("bearer", token);
+  localStorage.setItem("token", token);
 }
 
 export type Role = "student" | "company" | "cfa";

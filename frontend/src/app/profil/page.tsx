@@ -15,7 +15,7 @@ import {
   IconButton,
   Link,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { DateRange, LocationOn, Phone, Description, Upload, Pinterest } from '@mui/icons-material';
 
 export default function Profile() {
@@ -42,7 +42,7 @@ export default function Profile() {
     setEditing(false);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
     if (files && files.length > 0 && name === 'avatarUrl') {
       const avatarFile = files[0];
@@ -134,7 +134,6 @@ export default function Profile() {
               label="CV (fichier)"
               type="file"
               name="resume"
-              accept=".pdf"
               onChange={handleChange}
               fullWidth
               sx={{ mb: 2 }}
