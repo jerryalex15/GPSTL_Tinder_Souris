@@ -43,6 +43,8 @@ public class StudentController {
      * Retrieve all Students.
      *
      * @return A list of all stud
+     * ents.
+     */
     @GetMapping
     @PreAuthorize("hasRole('CFA') or hasRole('ADMIN')")
     public ResponseEntity<List<StudentDTO>> getAllStudents() {
