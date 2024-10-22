@@ -1,6 +1,9 @@
 import { List, ListItem, Card, CardContent, Typography, Button, Box } from '@mui/material';
+import { Application, applicationsByPosting, usePromise } from "@/app/api";
 
-const CandidateList = ({ candidates, offer, handleBackToOffers }) => {
+const CandidateList = ({ offer, handleBackToOffers }: any) => {
+  let [done, candidates, error] = usePromise(() => applicationsByPosting(offer.id));
+
   return (
     <Box 
       sx={{ 
@@ -26,7 +29,7 @@ const CandidateList = ({ candidates, offer, handleBackToOffers }) => {
       </Typography>
       
       <List sx={{ width: '100%', maxWidth: 800 }}>
-        {candidates.map((candidate) => (
+        {candidates && candidates.map((candidate: Application) => (
           <ListItem key={candidate.id} sx={{ marginBottom: 2, display: 'flex', justifyContent: 'center' }}>
             <Card 
               sx={{ 
@@ -40,22 +43,24 @@ const CandidateList = ({ candidates, offer, handleBackToOffers }) => {
             >
               <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                  {candidate.name}
+                  {candidate.student.user.email}
                 </Typography>
                 <Typography sx={{ color: '#7f8c8d' }}>
-                  Compétences : {candidate.skills}
+                  Compétences : {candidate.student.keySkills}
                 </Typography>
-                <Button 
-                  variant="contained" 
-                  sx={{ 
-                    alignSelf: 'flex-start', 
-                    backgroundColor: '#6a1b9a', 
-                    textTransform: 'none', 
-                    '&:hover': { backgroundColor: '#3f51b5' }
-                  }}
-                >
-                  Contacter
-                </Button>
+                <a href={`mailto:${candidate.student.user.email}`}>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      alignSelf: 'flex-start',
+                      backgroundColor: '#6a1b9a',
+                      textTransform: 'none',
+                      '&:hover': { backgroundColor: '#3f51b5' }
+                    }}
+                  >
+                    Contacter
+                  </Button>
+                </a>
               </CardContent>
             </Card>
           </ListItem>

@@ -17,7 +17,7 @@ import {
 } from "@/app/api";
 
 const emptyOffer: () => JobPostingCreation = () => ({
-  companyId: getAuthData()!.userId,
+  companyId: getAuthData()?.userId || 0,
   duration: "",
   positionTitle: "",
   requiredSkills: "",
@@ -48,8 +48,8 @@ const EntreprisePage = () => {
     }
   };
 
-  const handleSelectOffer = (offer: JobPosting) => {
-    setSelectedOfferId(offer.id);
+  const handleSelectOffer = (offerId: number) => {
+    setSelectedOfferId(offerId);
   };
 
   const handleBackToOffers = () => {
@@ -61,9 +61,9 @@ const EntreprisePage = () => {
     setIsCreatingOffer(true); // Activer l'état pour afficher le formulaire
   };
 
-  return (
-    <Container maxWidth="md" sx={{ marginTop: 12, paddingTop: 2 }}> {/* Ajout de paddingTop pour l'espace sous la navbar */}
-      <AppBarComponent isLoggedIn={true} />
+  return <>
+    <AppBarComponent isLoggedIn={true} />
+    <Container maxWidth="md" sx={{ paddingTop: 14 }}> {/* Ajout de paddingTop pour l'espace sous la navbar */}
       {isCreatingOffer ? ( // Vérifie si l'on est en train de créer une nouvelle offre
         <OfferForm 
           newOffer={newOffer} 
@@ -73,8 +73,7 @@ const EntreprisePage = () => {
         />
       ) : selectedOfferId ? (
         <Box>
-          <CandidateList 
-            candidates={[]}
+          <CandidateList
             offer={offers.find(offer => offer.id === selectedOfferId)} 
             handleBackToOffers={handleBackToOffers} 
           />
@@ -87,7 +86,7 @@ const EntreprisePage = () => {
         />
       )}
     </Container>
-  );
+  </>;
 };
 
 export default EntreprisePage;

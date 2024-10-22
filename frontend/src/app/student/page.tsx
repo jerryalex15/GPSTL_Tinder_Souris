@@ -48,7 +48,8 @@ export default function Home() {
 
   if (!mounted) return null;
 
-  return (
+  return <>
+    <AppBarComponent isLoggedIn={true} />
     <Box
       sx={{
         display: 'flex',
@@ -58,7 +59,6 @@ export default function Home() {
         padding: '20px',
       }}
     >
-      <AppBarComponent isLoggedIn={true} />
 
       <Box
         sx={{
@@ -78,5 +78,5 @@ export default function Home() {
         />
       </Box>
     </Box>
-  );
+  </>;
 }

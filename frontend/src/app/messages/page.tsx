@@ -47,10 +47,10 @@ const MessagingPage = () => {
     }
   };
 
-  return (
-    <Box sx={{ display: 'flex', height: '100vh', padding: 2, gap: 2, marginTop: '70px' }}>
+  return <>
+    <AppBarComponent isLoggedIn={true} />
+    <Box sx={{ display: 'flex', height: '100vh', paddingTop: 14, gap: 2 }}>
       {/* Ajuste 'marginTop' pour laisser de l'espace sous l'AppBar */}
-      <AppBarComponent isLoggedIn={true} />
       {/* Liste des conversations à gauche */}
       <ConversationList
         conversations={conversations}
@@ -75,7 +75,7 @@ const MessagingPage = () => {
         <MessageInput newMessage={newMessage} setNewMessage={setNewMessage} handleSendMessage={handleSendMessage} />
       </Box>
     </Box>
-  );
+  </>;
 };
 
 export default MessagingPage;

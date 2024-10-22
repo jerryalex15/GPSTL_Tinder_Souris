@@ -115,22 +115,34 @@ export type JobPosting = {
 export type JobPostingCreation = Omit<JobPosting, "id" | "createdAt">;
 
 export async function getStudentPostings(): Promise<JobPosting[]> {
-  let myId = getAuthData()!.userId;
+  let myId = getAuthData()?.userId;
   return await fetchWithAuthJSON(`/api/match/student/${myId}/jobs`);
 }
 
 export async function applyToJob(jobId: number): Promise<void> {
-  let myId = getAuthData()!.userId;
+  let myId = getAuthData()?.userId;
   return await fetchWithAuthJSON(`/api/applications/apply`, {method: "POST", body: {studentId: myId, jobPostingId: jobId}});
 }
 
 export async function getCompanyPostings(): Promise<JobPosting[]> {
-  let myId = getAuthData()!.userId;
+  let myId = getAuthData()?.userId;
   return await fetchWithAuthJSON(`/api/job_postings/company/${myId}`);
 }
 
 export async function createJobPosting(job: JobPostingCreation): Promise<JobPosting> {
   return await fetchWithAuthJSON(`/api/job_postings`, {method: "POST", body: {...job, categoryIds: job.categories}});
+}
+
+export type Application = {
+  id: number,
+  student: {
+    user: {email: string},
+    keySkills: string,
+  }
+}
+
+export async function applicationsByPosting(id: number): Promise<Application[]> {
+  return await fetchWithAuthJSON(`/api/applications/${id}`);
 }
 
 export function usePromise<R>(promise: () => Promise<R>): [boolean, R | null, Error | null] {

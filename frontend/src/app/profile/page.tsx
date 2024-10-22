@@ -46,7 +46,7 @@ export default function Profile() {
   return (
     <>
       <AppBarComponent isLoggedIn={true} /> {/* Affichage de la barre de navigation */}
-      <Container maxWidth="md" sx={{ minHeight: '100vh', py: 5, mt: 2 }}> {/* Ajout de margin-top ici */}
+      <Container maxWidth="md" sx={{ minHeight: '100vh', pt: 14}}> {/* Ajout de margin-top ici */}
         <Paper
           elevation={10}
           sx={{

@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,6 +29,11 @@ public class ApplicationController {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Application>> applicationsToJob(@PathVariable Long id) {
+        return ResponseEntity.ok(applicationRepository.findAll().stream().filter(app -> app.getJobPosting().getId().equals(id)).toList());
+    }
 
     /**
      * Allows a student to apply to a job posting.

@@ -5,7 +5,7 @@ import { JobPosting } from "@/app/api";
 
 interface OfferListProps {
   offers: JobPosting[];
-  handleSelectOffer: (offer: JobPosting) => void;
+  handleSelectOffer: (offerId: number) => void;
   handleCreateNewOffer: () => void;
 }
 
@@ -43,7 +43,7 @@ const OfferList: React.FC<OfferListProps> = ({ offers, handleSelectOffer, handle
       </Box>
 
       <List sx={{ padding: 0 }}>
-        {offers.map((offer: { id: Key | null | undefined; }) => (
+        {offers.map((offer: JobPosting) => (
           <OfferItem key={offer.id} offer={offer} handleSelectOffer={handleSelectOffer} />
         ))}
       </List>
