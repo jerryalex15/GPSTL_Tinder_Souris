@@ -57,13 +57,20 @@ public class StudentService {
         Student student = mapToEntity(studentDTO, user);
 
         // Handle Categories if provided
-        if (studentDTO.getCategoryIds() != null && !studentDTO.getCategoryIds().isEmpty()) {
-            Set<Category> categories = new HashSet<>(categoryRepository.findAllById(studentDTO.getCategoryIds()));
-            if (categories.size() != studentDTO.getCategoryIds().size()) {
-                throw new ResourceNotFoundException("One or more categories not found.");
-            }
-            student.setCategories(categories);
-        }
+//        if (studentDTO.getCategoryIds() != null && !studentDTO.getCategoryIds().isEmpty()) {
+//            Set<Category> categories = new HashSet<>(categoryRepository.findAllById(studentDTO.getCategoryIds()));
+//            if (categories.size() != studentDTO.getCategoryIds().size()) {
+//                throw new ResourceNotFoundException("One or more categories not found.");
+//            }
+//            student.setCategories(categories);
+//        }
+
+
+        // for mvp purposes, we will only allow students to be assigned to all categories
+        List<Long> categoryIds = categoryRepository.findAll().stream().map(Category::getId).toList();
+        Set<Category> categories = new HashSet<>(categoryRepository.findAllById(categoryIds));
+        student.setCategories(categories);
+
 
         // Save the Student entity
         Student savedStudent = studentRepository.save(student);
