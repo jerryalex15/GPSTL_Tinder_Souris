@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 type AuthData = {
   token: string,
@@ -30,11 +29,7 @@ async function fetchWithAuth(url: string, init: RequestInit = {}): Promise<Respo
   }
   let headers = init.headers as Record<string, string> || {};
   headers["Authorization"] = `Bearer ${token}`;
-  let res = await fetch(API_URL + url, {...init, headers});
-  if (res.status === 401) {
-    window.localStorage.removeItem("authData");
-  }
-  return res;
+  return await fetch(API_URL + url, { ...init, headers });
 }
 
 async function fetchTryWithAuth(url: string, init: RequestInit = {}): Promise<Response> {
@@ -43,11 +38,7 @@ async function fetchTryWithAuth(url: string, init: RequestInit = {}): Promise<Re
   if (token !== null) {
     headers["Authorization"] = `Bearer ${token}`;
   }
-  let res = await fetch(API_URL + url, {...init, headers});
-  if (token !== null && res.status === 401) {
-    window.localStorage.removeItem("authData");
-  }
-  return res;
+  return await fetch(API_URL + url, { ...init, headers });
 }
 
 function fetchJSON(fetch: typeof fetchWithAuth) {
@@ -121,6 +112,8 @@ export type JobPosting = {
   categories: number[],
 };
 
+export type JobPostingCreation = Omit<JobPosting, "id" | "createdAt">;
+
 export async function getStudentPostings(): Promise<JobPosting[]> {
   let myId = getAuthData()!.userId;
   return await fetchWithAuthJSON(`/api/match/student/${myId}/jobs`);
@@ -136,8 +129,8 @@ export async function getCompanyPostings(): Promise<JobPosting[]> {
   return await fetchWithAuthJSON(`/api/job_postings/company/${myId}`);
 }
 
-export async function createJobPosting(job: Omit<JobPosting, "id">): Promise<JobPosting> {
-  return await fetchWithAuthJSON(`/api/job_postings`, {method: "POST", body: job});
+export async function createJobPosting(job: JobPostingCreation): Promise<JobPosting> {
+  return await fetchWithAuthJSON(`/api/job_postings`, {method: "POST", body: {...job, categoryIds: job.categories}});
 }
 
 export function usePromise<R>(promise: () => Promise<R>): [boolean, R | null, Error | null] {

@@ -2,6 +2,7 @@ package com.gpstl.alternart.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,6 +24,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity, enable in production
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers("/**").permitAll() // Public endpoints
                         // accept OPTIONS AND ALL METHODS ON EVERY ENDPOINT
 //                       .anyrequest().permitAll()

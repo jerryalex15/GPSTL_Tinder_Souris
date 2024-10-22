@@ -30,7 +30,7 @@ public class CompanyController {
      * @return A list of all companies.
      */
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('student')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STUDENT')")
     public ResponseEntity<List<CompanyDTO>> getAllCompanies() {
         List<CompanyDTO> companies = companyService.getAllCompanies();
         return new ResponseEntity<>(companies, HttpStatus.OK);

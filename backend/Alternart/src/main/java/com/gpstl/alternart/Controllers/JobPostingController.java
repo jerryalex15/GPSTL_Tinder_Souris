@@ -52,7 +52,8 @@ public class JobPostingController {
 
     @GetMapping("/company/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<JobPostingResponse>> getJobPostingsByCompanyId(@PathVariable("id") Long companyId) {
+    public ResponseEntity<List<JobPostingResponse>> getJobPostingsByCompanyId(@PathVariable("id") Long companyUserId) {
+        Long companyId = jobPostingService.getCompanyID(companyUserId);
         List<JobPostingResponse> jobPostings = jobPostingService.getAllJobPostingsByCompany(companyId);
         return ResponseEntity.ok(jobPostings);
     }
