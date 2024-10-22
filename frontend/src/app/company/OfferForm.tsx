@@ -1,6 +1,12 @@
 import { Box, Button, TextField, Typography, Grid } from '@mui/material';
+import { JobPosting, JobPostingCreation } from "@/app/api";
 
-const OfferForm = ({ newOffer, setNewOffer, handleAddOffer, handleBack }) => {
+const OfferForm = ({ newOffer, setNewOffer, handleAddOffer, handleBack }: {
+  newOffer: JobPostingCreation,
+  setNewOffer: React.Dispatch<React.SetStateAction<JobPostingCreation>>,
+  handleAddOffer: () => void,
+  handleBack: () => void,
+}) => {
   return (
     <Box 
       sx={{ 
@@ -20,8 +26,8 @@ const OfferForm = ({ newOffer, setNewOffer, handleAddOffer, handleBack }) => {
           <TextField
             fullWidth
             label="Titre de l'offre"
-            value={newOffer.title}
-            onChange={(e) => setNewOffer({ ...newOffer, title: e.target.value })}
+            value={newOffer.positionTitle}
+            onChange={(e) => setNewOffer({ ...newOffer, positionTitle: e.target.value })}
             margin="normal"
             variant="outlined"
             required
@@ -44,61 +50,9 @@ const OfferForm = ({ newOffer, setNewOffer, handleAddOffer, handleBack }) => {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Description de l'offre"
-            multiline
-            rows={4}
-            value={newOffer.description}
-            onChange={(e) => setNewOffer({ ...newOffer, description: e.target.value })}
-            margin="normal"
-            variant="outlined"
-            required
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: '#6a1b9a',
-                },
-                '&:hover fieldset': {
-                  borderColor: '#ab47bc',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#ab47bc',
-                },
-              },
-            }}
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Niveau d'étude"
-            value={newOffer.educationLevel}
-            onChange={(e) => setNewOffer({ ...newOffer, educationLevel: e.target.value })}
-            margin="normal"
-            variant="outlined"
-            required
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: '#6a1b9a',
-                },
-                '&:hover fieldset': {
-                  borderColor: '#ab47bc',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#ab47bc',
-                },
-              },
-            }}
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Secteur"
-            value={newOffer.sector}
-            onChange={(e) => setNewOffer({ ...newOffer, sector: e.target.value })}
+            label="Skills"
+            value={newOffer.requiredSkills}
+            onChange={(e) => setNewOffer({ ...newOffer, requiredSkills: e.target.value })}
             margin="normal"
             variant="outlined"
             required

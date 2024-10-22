@@ -7,11 +7,17 @@ import OfferForm from './OfferForm';
 import OfferList from './OfferList';
 import CandidateList from './CandidateList';
 import AppBarComponent from '@/components/AppBarComponent';
-import { createJobPosting, getAuthData, getCompanyPostings, JobPosting, usePromise } from "@/app/api";
+import {
+  createJobPosting,
+  getAuthData,
+  getCompanyPostings,
+  JobPosting,
+  JobPostingCreation,
+  usePromise
+} from "@/app/api";
 
-const emptyOffer: () => Omit<JobPosting, "id"> = () => ({
+const emptyOffer: () => JobPostingCreation = () => ({
   companyId: getAuthData()!.userId,
-  createdAt: "",
   duration: "",
   positionTitle: "",
   requiredSkills: "",
@@ -27,16 +33,16 @@ const EntreprisePage = () => {
     }
   }, [apiOffers]);
   
-  const [newOffer, setNewOffer] = useState<Omit<JobPosting, "id">>(emptyOffer);
+  const [newOffer, setNewOffer] = useState<JobPostingCreation>(emptyOffer);
 
   const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
   const [isCreatingOffer, setIsCreatingOffer] = useState(false); // Nouvel état pour gérer l'affichage du formulaire
 
   const handleAddOffer = () => {
-    if (Object.entries(newOffer).every(([, value]) => value)) {
+    if (true) {
       createJobPosting(newOffer);
       const newId = offers.length + 10000; // BIG
-      setOffers([...offers, { id: newId, ...newOffer }]);
+      setOffers([...offers, { id: newId, createdAt: new Date().toLocaleDateString(), ...newOffer }]);
       setNewOffer(emptyOffer);
       setIsCreatingOffer(false); // Réinitialiser l'état après l'ajout
     }
