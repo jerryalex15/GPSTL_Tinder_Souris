@@ -29,7 +29,7 @@ public class Application {
     private JobPosting jobPosting;
 
     @Column(nullable = false)
-    private String status = "applied";
+    private String status = "applied"; // Status can be 'applied', 'accepted', 'rejected'
 
     @Column(nullable = false)
     private LocalDateTime appliedAt = LocalDateTime.now();

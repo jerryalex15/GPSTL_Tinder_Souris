@@ -83,7 +83,7 @@ export default function Register() {
       try {
         await register(username, email, password, role);
         console.log("User registered successfully");
-        // Redirect or show success message as needed
+        router.push("/login");
       } catch (e) {
         setErrors({ ...errors, username: "Ce nom d'utilisateur existe déjà" });
       }

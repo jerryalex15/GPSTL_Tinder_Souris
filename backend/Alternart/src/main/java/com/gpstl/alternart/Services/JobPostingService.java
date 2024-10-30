@@ -65,6 +65,16 @@ public class JobPostingService {
                 .collect(Collectors.toList());
     }
 
+    public List<JobPostingResponse> getAllJobPostingsByCompany(Long companyId) {
+        // query the database for all job postings by the company
+
+        List<JobPosting> jobPostings = jobPostingRepository.findAll();
+        return jobPostings.stream()
+                .filter(jobPosting -> jobPosting.getCompany().getId().equals(companyId))
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     public JobPostingResponse getJobPostingById(Long jobPostingId) {
         JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job Posting not found with ID: " + jobPostingId));

@@ -1,55 +1,56 @@
 "use client";
 
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 
-type Offer = {
-  id: number;
-  title: string;
-  description: string;
-  educationLevel?: string;
-  sector?: string;
-};
 import { Container, Typography, Box, Button } from '@mui/material';
 import OfferForm from './OfferForm';
 import OfferList from './OfferList';
 import CandidateList from './CandidateList';
 import AppBarComponent from '@/components/AppBarComponent';
+import {
+  createJobPosting,
+  getAuthData,
+  getCompanyPostings,
+  JobPosting,
+  JobPostingCreation,
+  usePromise
+} from "@/app/api";
+
+const emptyOffer: () => JobPostingCreation = () => ({
+  companyId: getAuthData()?.userId || 0,
+  duration: "",
+  positionTitle: "",
+  requiredSkills: "",
+  categories: [],
+});
 import DalleImage from '../../../img/dalle.png';
 
 const EntreprisePage = () => {
-  const [offers, setOffers] = useState([
-    { id: 1, title: 'Développeur Front-End', description: 'Recherche alternant avec expérience en React.' },
-    { id: 2, title: 'Designer UX/UI', description: 'Conception des interfaces d’applications web et mobile.' }
-  ]);
+  const [done, apiOffers, error] = usePromise(getCompanyPostings);
+  const [offers, setOffers] = useState<JobPosting[]>([]);
+  useEffect(() => {
+    if (apiOffers) {
+      setOffers(apiOffers);
+    }
+  }, [apiOffers]);
   
-  const [newOffer, setNewOffer] = useState({ title: '', description: '', educationLevel: '', sector: '' });
-  
-  const [candidates, setCandidates] = useState({
-    1: [
-      { id: 1, name: 'Alice Dupont', skills: 'React, JavaScript, CSS' },
-      { id: 2, name: 'Jean Martin', skills: 'Vue, TypeScript, HTML' }
-    ],
-    2: [
-      { id: 3, name: 'Marc Lebrun', skills: 'Photoshop, Figma, UI Design' },
-      { id: 4, name: 'Sophie Durand', skills: 'Illustrator, XD, Prototyping' }
-    ]
-  });
+  const [newOffer, setNewOffer] = useState<JobPostingCreation>(emptyOffer);
 
   const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
   const [isCreatingOffer, setIsCreatingOffer] = useState(false); // Nouvel état pour gérer l'affichage du formulaire
 
   const handleAddOffer = () => {
-    if (newOffer.title && newOffer.description && newOffer.educationLevel && newOffer.sector) {
-      const newId = offers.length + 1;
-      setOffers([...offers, { id: newId, ...newOffer }]);
-      setCandidates({ ...candidates, [newId]: [] });
-      setNewOffer({ title: '', description: '', educationLevel: '', sector: '' });
+    if (true) {
+      createJobPosting(newOffer);
+      const newId = offers.length + 10000; // BIG
+      setOffers([...offers, { id: newId, createdAt: new Date().toLocaleDateString(), ...newOffer }]);
+      setNewOffer(emptyOffer);
       setIsCreatingOffer(false); // Réinitialiser l'état après l'ajout
     }
   };
 
-  const handleSelectOffer = (offer: Offer) => {
-    setSelectedOfferId(offer.id);
+  const handleSelectOffer = (offerId: number) => {
+    setSelectedOfferId(offerId);
   };
 
   const handleBackToOffers = () => {
@@ -61,9 +62,9 @@ const EntreprisePage = () => {
     setIsCreatingOffer(true); // Activer l'état pour afficher le formulaire
   };
 
-  return (
-    <Container maxWidth="md" sx={{ marginTop: 12, paddingTop: 2 }}> {/* Ajout de paddingTop pour l'espace sous la navbar */}
-      <AppBarComponent isLoggedIn={true} profileType={"company"}/>
+  return <>
+    <AppBarComponent isLoggedIn={true} />
+    <Container maxWidth="md" sx={{ paddingTop: 14 }}> {/* Ajout de paddingTop pour l'espace sous la navbar */}
       {isCreatingOffer ? ( // Vérifie si l'on est en train de créer une nouvelle offre
         <OfferForm 
           newOffer={newOffer} 
@@ -73,8 +74,7 @@ const EntreprisePage = () => {
         />
       ) : selectedOfferId ? (
         <Box>
-          <CandidateList 
-            candidates={candidates[selectedOfferId]} 
+          <CandidateList
             offer={offers.find(offer => offer.id === selectedOfferId)} 
             handleBackToOffers={handleBackToOffers} 
           />
@@ -87,7 +87,7 @@ const EntreprisePage = () => {
         />
       )}
     </Container>
-  );
+  </>;
 };
 
 export default EntreprisePage;

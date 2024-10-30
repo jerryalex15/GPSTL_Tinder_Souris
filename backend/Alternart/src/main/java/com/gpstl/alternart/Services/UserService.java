@@ -1,8 +1,11 @@
 package com.gpstl.alternart.Services;
 
+import com.gpstl.alternart.Dto.CompanyDTO;
 import com.gpstl.alternart.Dto.SignInRequest;
 import com.gpstl.alternart.Dto.SignupRequest;
+import com.gpstl.alternart.Dto.StudentDTO;
 import com.gpstl.alternart.Models.User;
+import com.gpstl.alternart.Repositories.CategoryRepository;
 import com.gpstl.alternart.Repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +14,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
-
+import java.util.List;
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private StudentService studentService;
+
+    @Autowired
+    private CompanyService companyService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -33,8 +42,18 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(signupRequest.getPassword()));
         user.setEmail(signupRequest.getEmail());
         user.setRole(signupRequest.getRole()); // Default role
-
         user = userRepository.save(user);
+        if (Objects.equals(user.getRole(), "student")) {
+            StudentDTO studentDTO = new StudentDTO();
+            studentDTO.setUserId(user.getId());
+            studentDTO.setKeySkills("");
+            studentDTO.setCvLink("");
+            studentDTO.setCategoryIds(List.of());
+            studentDTO.setVideoPresentationLink("");
+            studentDTO.setPortfolioLink("");
+            studentService.createStudent(studentDTO);
+        }
+
         return user.getId();
     }
 
@@ -55,5 +74,10 @@ public class UserService {
     public Optional<Long> getIdOfUser(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         return user.map(User::getId);
+    }
+
+    public Optional<String> getRoleOfUser(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.map(User::getRole);
     }
 }

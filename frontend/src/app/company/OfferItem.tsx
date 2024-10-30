@@ -1,7 +1,11 @@
 import { ListItem, Card, CardContent, Typography, IconButton,Box } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { JobPosting } from "@/app/api";
 
-const OfferItem = ({ offer, handleSelectOffer }) => {
+const OfferItem = ({ offer, handleSelectOffer }: {
+  offer: JobPosting,
+  handleSelectOffer: (offerId: number) => void
+}) => {
   return (
     <ListItem 
       sx={{ 
@@ -29,10 +33,10 @@ const OfferItem = ({ offer, handleSelectOffer }) => {
         <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-              {offer.title}
+              {offer.positionTitle}
             </Typography>
             <Typography sx={{ color: '#7f8c8d' }}>
-              {offer.description}
+              {offer.requiredSkills}
             </Typography>
           </Box>
           <IconButton aria-label="settings" sx={{ color: '#3f51b5' }}>

@@ -1,15 +1,11 @@
 import { List, Box, Paper, Typography, Button } from '@mui/material'; // Importation du composant Button
 import OfferItem from './OfferItem';
 import { Key } from 'react';
-
-interface Offer {
-  id: Key | null | undefined;
-  // Add other properties of the offer object here if needed
-}
+import { JobPosting } from "@/app/api";
 
 interface OfferListProps {
-  offers: Offer[];
-  handleSelectOffer: (offer: Offer) => void;
+  offers: JobPosting[];
+  handleSelectOffer: (offerId: number) => void;
   handleCreateNewOffer: () => void;
 }
 
@@ -47,7 +43,7 @@ const OfferList: React.FC<OfferListProps> = ({ offers, handleSelectOffer, handle
       </Box>
 
       <List sx={{ padding: 0 }}>
-        {offers.map((offer: { id: Key | null | undefined; }) => (
+        {offers.map((offer: JobPosting) => (
           <OfferItem key={offer.id} offer={offer} handleSelectOffer={handleSelectOffer} />
         ))}
       </List>
