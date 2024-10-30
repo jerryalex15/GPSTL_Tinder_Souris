@@ -8,7 +8,7 @@ const Page = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/login'); // Redirect to login page if not authenticated
+      router.push('/choicePage'); // Redirect to login page if not authenticated
     }
   }, [isAuthenticated, router]);
 

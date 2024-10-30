@@ -1,8 +1,7 @@
 "use client";
 
-import { SetStateAction, useEffect, useState } from 'react';
-
-import { Container, Typography, Box, Button } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Container, Box } from '@mui/material';
 import OfferForm from './OfferForm';
 import OfferList from './OfferList';
 import CandidateList from './CandidateList';
@@ -23,29 +22,28 @@ const emptyOffer: () => JobPostingCreation = () => ({
   requiredSkills: "",
   categories: [],
 });
-import DalleImage from '../../../img/dalle.png';
 
 const EntreprisePage = () => {
   const [done, apiOffers, error] = usePromise(getCompanyPostings);
   const [offers, setOffers] = useState<JobPosting[]>([]);
+
   useEffect(() => {
     if (apiOffers) {
       setOffers(apiOffers);
     }
   }, [apiOffers]);
-  
-  const [newOffer, setNewOffer] = useState<JobPostingCreation>(emptyOffer);
 
+  const [newOffer, setNewOffer] = useState<JobPostingCreation>(emptyOffer);
   const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
-  const [isCreatingOffer, setIsCreatingOffer] = useState(false); // Nouvel état pour gérer l'affichage du formulaire
+  const [isCreatingOffer, setIsCreatingOffer] = useState(false);
 
   const handleAddOffer = () => {
     if (true) {
       createJobPosting(newOffer);
-      const newId = offers.length + 10000; // BIG
+      const newId = offers.length + 10000;
       setOffers([...offers, { id: newId, createdAt: new Date().toLocaleDateString(), ...newOffer }]);
       setNewOffer(emptyOffer);
-      setIsCreatingOffer(false); // Réinitialiser l'état après l'ajout
+      setIsCreatingOffer(false);
     }
   };
 
@@ -55,39 +53,49 @@ const EntreprisePage = () => {
 
   const handleBackToOffers = () => {
     setSelectedOfferId(null);
-    setIsCreatingOffer(false); // Réinitialiser l'état si l'on revient à la liste des offres
+    setIsCreatingOffer(false);
   };
 
   const handleCreateNewOffer = () => {
-    setIsCreatingOffer(true); // Activer l'état pour afficher le formulaire
+    setIsCreatingOffer(true);
   };
 
-  return <>
-    <AppBarComponent isLoggedIn={true} />
-    <Container maxWidth="md" sx={{ paddingTop: 14 }}> {/* Ajout de paddingTop pour l'espace sous la navbar */}
-      {isCreatingOffer ? ( // Vérifie si l'on est en train de créer une nouvelle offre
-        <OfferForm 
-          newOffer={newOffer} 
-          setNewOffer={setNewOffer} 
-          handleAddOffer={handleAddOffer} 
-          handleBack={handleBackToOffers} // Passe la fonction de retour
-        />
-      ) : selectedOfferId ? (
-        <Box>
-          <CandidateList
-            offer={offers.find(offer => offer.id === selectedOfferId)} 
-            handleBackToOffers={handleBackToOffers} 
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+
+      }}
+    >
+      <AppBarComponent isLoggedIn={true} />
+
+      <Container maxWidth="md" sx={{ paddingTop: 14, flex: 1 }}>
+        {isCreatingOffer ? (
+          <OfferForm
+            newOffer={newOffer}
+            setNewOffer={setNewOffer}
+            handleAddOffer={handleAddOffer}
+            handleBack={handleBackToOffers}
           />
-        </Box>
-      ) : (
-        <OfferList 
-          offers={offers} 
-          handleSelectOffer={handleSelectOffer} 
-          handleCreateNewOffer={handleCreateNewOffer} 
-        />
-      )}
-    </Container>
-  </>;
+        ) : selectedOfferId ? (
+          <Box>
+            <CandidateList
+              offer={offers.find(offer => offer.id === selectedOfferId)}
+              handleBackToOffers={handleBackToOffers}
+            />
+          </Box>
+        ) : (
+          <OfferList
+            offers={offers}
+            handleSelectOffer={handleSelectOffer}
+            handleCreateNewOffer={handleCreateNewOffer}
+          />
+        )}
+      </Container>
+    </Box>
+  );
 };
 
 export default EntreprisePage;
