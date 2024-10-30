@@ -100,10 +100,6 @@ export default function Register() {
         display: 'flex',
         minWidth: '100vw',
         minHeight: '100vh',
-        backgroundImage: 'url("https://img.freepik.com/free-photo/vibrant-yellow-blue-waves-showcase-modern-creativity-generated-by-ai_188544-9593.jpg?t=st=1729245631~exp=1729249231~hmac=06095be343c87f5cc01271b880fe4e8f6742feaf5c7a2a778c0cbc153c3fec5e&w=1800")', // Replace with your desired GIF URL
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
       }}
     >
       {/* Left area with the stylized text and image */}
@@ -120,13 +116,13 @@ export default function Register() {
       >
 
         <Image
-        // we have an image in img/dalle.webp
-          src= {DalleImage}
-           // Using the uploaded image
-          alt="Alter'n'art"
-          width={400}
-          height={400}
-        />
+                        // we have an image in img/dalle.webp
+                          src= {DalleImage}
+                          onClick={() => router.push('/choicePage')}
+                          alt="Alter'n'art"
+                          width={400}
+                          height={400}
+                        />
       </Box>
 
       {/* Right area with the registration form */}

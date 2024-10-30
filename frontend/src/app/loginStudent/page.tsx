@@ -74,13 +74,13 @@ export default function Login() {
         }}
       >
         <Image
-                // we have an image in img/dalle.webp
-                  src= {DalleImage}
-                  onClick={() => router.push('/choicePage')}
-                  alt="Alter'n'art"
-                  width={400}
-                  height={400}
-                />
+                        // we have an image in img/dalle.webp
+                          src= {DalleImage}
+                          onClick={() => router.push('/choicePage')}
+                          alt="Alter'n'art"
+                          width={400}
+                          height={400}
+                        />
       </Box>
 
       {/* Right area with the login form */}

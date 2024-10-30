@@ -68,7 +68,7 @@ export default function Home() {
         padding: '20px',
       }}
     >
-      <AppBarComponent isLoggedIn={true} />
+      <AppBarComponent isLoggedIn={true} profileType={"student"} />
 
       <Box
         sx={{

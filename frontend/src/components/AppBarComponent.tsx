@@ -1,32 +1,45 @@
 import { AppBar, Toolbar, Button, Box, IconButton } from '@mui/material';
-import { AccountCircle, Mail } from '@mui/icons-material'; // Importer l'icône Mail
+import { AccountCircle, Mail } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import DalleImage from '../../img/dalle.png';
 
-const AppBarComponent = ({ isLoggedIn }) => {
+interface AppBarComponentProps {
+  isLoggedIn: boolean;
+  profileType: 'student' | 'company'; // Ajout du prop profileType
+}
+
+const AppBarComponent: React.FC<AppBarComponentProps> = ({ isLoggedIn, profileType }) => {
   const router = useRouter();
+
+  const handleLogoClick = () => {
+    if (profileType === 'student') {
+      router.push('/student'); // Page d'accueil étudiant
+    } else {
+      router.push('/company'); // Page d'accueil entreprise
+    }
+  };
 
   return (
     <AppBar
-      position="fixed" // L'AppBar est fixée en haut de la page
+      position="fixed"
       sx={{
         background: 'rgba(0, 0, 0, 0.7)',
         borderRadius: '16px',
         boxShadow: 'none',
-        top: 20, // Position en haut
-        width: '90%', // Limiter la largeur à 90% de l'écran
-        maxWidth: '600px', // Largeur maximale pour éviter que l'AppBar prenne toute la largeur sur grand écran
-        left: '50%', // Centrer horizontalement
-        transform: 'translateX(-50%)', // Centrer en utilisant la transformation
-        zIndex: 1100, // S'assurer qu'elle reste au-dessus des autres éléments
+        top: 20,
+        width: '90%',
+        maxWidth: '600px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 1100,
       }}
     >
       <Toolbar
-        sx={{ display: 'flex', justifyContent: 'space-between', paddingX: '10px' }} // Réduire le padding horizontal
+        sx={{ display: 'flex', justifyContent: 'space-between', paddingX: '10px' }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={() => router.push('/')}>
+          <IconButton onClick={handleLogoClick}>
             <Image
               src={DalleImage}
               alt="Logo"
@@ -36,19 +49,19 @@ const AppBarComponent = ({ isLoggedIn }) => {
           </IconButton>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {isLoggedIn && ( // Afficher l'icône de mail uniquement si connecté
+          {isLoggedIn && (
             <IconButton onClick={() => router.push('/messages')}>
-              <Mail sx={{ color: '#FFF', fontSize: 30, marginRight: '10px' }} /> {/* Réduire l'icône */}
+              <Mail sx={{ color: '#FFF', fontSize: 30, marginRight: '10px' }} />
             </IconButton>
           )}
           {isLoggedIn ? (
             <IconButton onClick={() => router.push('/profile')}>
-              <AccountCircle sx={{ color: '#FFF', fontSize: 36 }} /> {/* Réduire l'icône */}
+              <AccountCircle sx={{ color: '#FFF', fontSize: 36 }} />
             </IconButton>
           ) : (
             <Button
               variant="text"
-              sx={{ marginRight: '10px', color: '#FFF', fontWeight: 'bold', fontSize: '0.875rem' }} // Réduire la taille du texte
+              sx={{ marginRight: '10px', color: '#FFF', fontWeight: 'bold', fontSize: '0.875rem' }}
               onClick={() => router.push('/login')}
             >
               Connexion

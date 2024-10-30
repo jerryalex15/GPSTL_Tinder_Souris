@@ -14,6 +14,7 @@ import OfferForm from './OfferForm';
 import OfferList from './OfferList';
 import CandidateList from './CandidateList';
 import AppBarComponent from '@/components/AppBarComponent';
+import DalleImage from '../../../img/dalle.png';
 
 const EntreprisePage = () => {
   const [offers, setOffers] = useState([
@@ -62,7 +63,7 @@ const EntreprisePage = () => {
 
   return (
     <Container maxWidth="md" sx={{ marginTop: 12, paddingTop: 2 }}> {/* Ajout de paddingTop pour l'espace sous la navbar */}
-      <AppBarComponent isLoggedIn={true} />
+      <AppBarComponent isLoggedIn={true} profileType={"company"}/>
       {isCreatingOffer ? ( // Vérifie si l'on est en train de créer une nouvelle offre
         <OfferForm 
           newOffer={newOffer} 
