@@ -1,4 +1,4 @@
-page.tsx"use client";
+"use client";
 import {
   Card,
   CardContent,

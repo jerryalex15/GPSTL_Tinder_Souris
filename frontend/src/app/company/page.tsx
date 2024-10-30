@@ -80,7 +80,7 @@ const EntreprisePage = () => {
             handleBack={handleBackToOffers}
           />
         ) : selectedOfferId ? (
-          <Box>
+          <Box  sx={{borderRadius: 3}}>
             <CandidateList
               offer={offers.find(offer => offer.id === selectedOfferId)}
               handleBackToOffers={handleBackToOffers}
