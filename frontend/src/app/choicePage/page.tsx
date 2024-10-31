@@ -9,21 +9,11 @@ const ChoicePage: React.FC = () => {
   const router = useRouter();
 
   const handleChoice = (choice: 'etudiant' | 'entreprise') => {
-    if (choice === 'etudiant') {
-      router.push('/loginStudent');
-    } else if (choice === 'entreprise') {
-      router.push('/loginEntreprise');
-    }
+    router.push(choice === 'etudiant' ? '/loginStudent' : '/loginEntreprise');
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        minWidth: '100vw',
-        minHeight: '100vh',
-      }}
-    >
+    <div style={{ display: 'flex', minWidth: '100vw', minHeight: '100vh' }}>
       {/* Zone de gauche avec l'image */}
       <Box
         sx={{
@@ -31,18 +21,17 @@ const ChoicePage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '20px',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // Overlay pour l'image
+          padding: '40px',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)', // Overlay pour l'image
           flexDirection: 'column',
         }}
       >
         <Image
           src={DalleImage}
-          alt="Alter'n'art"
+          alt="Votre entreprise"
           width={400}
           height={400}
         />
-
       </Box>
 
       {/* Zone de droite avec les choix de profil */}
@@ -52,7 +41,7 @@ const ChoicePage: React.FC = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: '20px',
+          padding: '40px',
           flexDirection: 'column',
         }}
       >
@@ -60,27 +49,27 @@ const ChoicePage: React.FC = () => {
           sx={{
             width: '100%',
             maxWidth: 400,
-            backgroundColor: 'rgba(255, 255, 255, 0.85)', // Fond semi-transparent
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)', // Fond semi-transparent
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+            borderRadius: '12px',
           }}
         >
           <CardHeader
-            title="Bienvenue !"
-            subheader="Veuillez choisir votre profil"
-            sx={{ textAlign: 'center', color: '#4e342e' }}
+            title="Bienvenue sur notre plateforme !"
+            subheader="Veuillez sélectionner votre profil pour continuer"
+            sx={{ textAlign: 'center', color: '#2c3e50' }}
           />
           <CardContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={() => handleChoice('etudiant')}
                 sx={{
-                  backgroundColor: '#673ab7',
+                  backgroundColor: '#007bff',
                   color: '#fff',
                   '&:hover': {
-                    backgroundColor: '#5e35b1',
+                    backgroundColor: '#0056b3',
                   },
                 }}
               >
@@ -91,10 +80,10 @@ const ChoicePage: React.FC = () => {
                 color="secondary"
                 onClick={() => handleChoice('entreprise')}
                 sx={{
-                  backgroundColor: '#ff7043',
+                  backgroundColor: '#28a745',
                   color: '#fff',
                   '&:hover': {
-                    backgroundColor: '#f4511e',
+                    backgroundColor: '#218838',
                   },
                 }}
               >

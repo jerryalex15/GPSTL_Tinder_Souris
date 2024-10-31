@@ -22,7 +22,7 @@ const MessageInput = ({ newMessage, setNewMessage, handleSendMessage }) => {
         variant="contained"
         color="secondary"
         onClick={handleSendMessage}
-        sx={{ marginLeft: 2, borderRadius: '10px', padding: '10px 20px' }}
+        sx={{ marginLeft: 2, padding: '10px 20px' }}
       >
         Send
       </Button>

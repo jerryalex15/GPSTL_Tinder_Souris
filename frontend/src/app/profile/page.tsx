@@ -1,5 +1,5 @@
 "use client";
-import { Container, Paper, useTheme, Divider } from '@mui/material';
+import { Container, Paper, useTheme, Divider,Box } from '@mui/material';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ProfileAvatar from './ProfileAvatar';
@@ -19,7 +19,7 @@ export default function Profile() {
     birthPlace: 'Lyon, France',
     phoneNumber: '0612345678',
     resume: 'Développeuse front-end avec 5 ans d’expérience dans la création d’applications web.',
-    avatarUrl: '/avatar-alice.png', // Remplace par un chemin d'image valide
+    avatarUrl: '/avatar-alice.png',
     pinterestUrl: 'https://www.pinterest.com/alicedupont',
   });
 
@@ -45,28 +45,30 @@ export default function Profile() {
 
   return (
     <>
-      <AppBarComponent isLoggedIn={true} /> {/* Affichage de la barre de navigation */}
-      <Container maxWidth="md" sx={{ minHeight: '100vh', pt: 14}}> {/* Ajout de margin-top ici */}
-        <Paper
-          elevation={10}
+      <AppBarComponent isLoggedIn={true} profileType={'student'} />
+      <Container sx={{ minHeight: '100vh',background: 'rgb(255, 255, 255)',boxShadow: theme.shadows[5], // Légèrement plus opaque pour un aspect plus pro
+}}>
+        <Box
+
           sx={{
-            p: 4,
-            background: 'rgba(255, 255, 255, 0.85)',
-            borderRadius: '16px',
-            boxShadow: theme.shadows[5],
+            p: 8,
+            paddingTop: theme.spacing(15),
             position: 'relative',
+            minHeight: '100vh',
           }}
         >
-          <ProfileAvatar user={user} previewAvatar={previewAvatar} editing={editing} handleChange={handleChange} />
-          <ProfileInfo user={user} />
-          <Divider sx={{ my: 3 }} />
-          {editing ? (
-            <EditProfileForm formData={formData} handleChange={handleChange} handleSaveProfile={handleSaveProfile} />
-          ) : (
-            <ProfileDetails user={user} />
-          )}
-          {!editing && <ProfileButtons handleEditProfile={handleEditProfile} router={router} />}
-        </Paper>
+          <Box>
+            <ProfileAvatar user={user} previewAvatar={previewAvatar} editing={editing} handleChange={handleChange} />
+              <ProfileInfo user={user} />
+              <Divider />
+              {editing ? (
+                <EditProfileForm formData={formData} handleChange={handleChange} handleSaveProfile={handleSaveProfile} />
+              ) : (
+                <ProfileDetails user={user} />
+              )}
+              {!editing && <ProfileButtons handleEditProfile={handleEditProfile} router={router} />}
+          </Box>
+        </Box>
       </Container>
     </>
   );

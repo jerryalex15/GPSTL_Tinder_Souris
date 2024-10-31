@@ -4,12 +4,9 @@ import { Box, List, ListItem, Typography, Avatar, Paper } from '@mui/material';
 const ConversationList = ({ conversations, onConversationClick }) => {
   return (
     <Box
-      component={Paper}
-      elevation={5} // Augmenter l'élévation pour plus de profondeur
       sx={{
         width: '30%',
-        backgroundColor: 'rgba(0, 0, 0, 0.9)', // Légèrement transparent pour un effet plus doux
-        borderRadius: 2,
+        backgroundColor: 'rgb(0, 0, 0)', // Légèrement transparent pour un effet plus doux
         padding: 3,
         display: 'flex',
         flexDirection: 'column',

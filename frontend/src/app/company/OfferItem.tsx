@@ -1,10 +1,10 @@
-import { ListItem, Card, CardContent, Typography, IconButton,Box } from '@mui/material';
+import { ListItem, Card, CardContent, Typography, IconButton, Box } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { JobPosting } from "@/app/api";
 
 const OfferItem = ({ offer, handleSelectOffer }: {
-  offer: JobPosting,
-  handleSelectOffer: (offerId: number) => void
+  offer: JobPosting;
+  handleSelectOffer: (offerId: number) => void;
 }) => {
   return (
     <ListItem 
@@ -23,10 +23,10 @@ const OfferItem = ({ offer, handleSelectOffer }: {
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', 
           borderRadius: 3, 
           padding: 2, 
-          transition: 'transform 0.3s ease', 
+          transition: 'transform 0.2s ease', 
           '&:hover': { 
-            transform: 'scale(1.02)', 
-            boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' 
+            transform: 'scale(1.01)', 
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' 
           } 
         }}
       >
@@ -39,7 +39,14 @@ const OfferItem = ({ offer, handleSelectOffer }: {
               {offer.requiredSkills}
             </Typography>
           </Box>
-          <IconButton aria-label="settings" sx={{ color: '#3f51b5' }}>
+          <IconButton 
+            aria-label="settings" 
+            onClick={(e) => {
+              e.stopPropagation(); // Empêche le clic de se propager au ListItem
+              // Ajoutez ici la logique pour ouvrir les paramètres de l'offre si nécessaire
+            }}
+            sx={{ color: '#3f51b5', '&:hover': { color: '#1e88e5' }}}
+          >
             <SettingsIcon />
           </IconButton>
         </CardContent>

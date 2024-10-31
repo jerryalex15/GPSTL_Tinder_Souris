@@ -1,19 +1,39 @@
-import { Box, Button, TextField, Typography, Grid } from '@mui/material';
+import { Box, Button, TextField, Typography, Grid, CircularProgress, Alert } from '@mui/material';
 import { JobPosting, JobPostingCreation } from "@/app/api";
+import { useState } from 'react';
 
-const OfferForm = ({ newOffer, setNewOffer, handleAddOffer, handleBack }: {
-  newOffer: JobPostingCreation,
-  setNewOffer: React.Dispatch<React.SetStateAction<JobPostingCreation>>,
-  handleAddOffer: () => void,
-  handleBack: () => void,
+const OfferForm = ({
+  newOffer,
+  setNewOffer,
+  handleAddOffer,
+  handleBack,
+}: {
+  newOffer: JobPostingCreation;
+  setNewOffer: React.Dispatch<React.SetStateAction<JobPostingCreation>>;
+  handleAddOffer: () => Promise<void>; // Assurez-vous que handleAddOffer retourne une promesse
+  handleBack: () => void;
 }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const onSubmit = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await handleAddOffer(); // Assurez-vous que cette fonction gère l'ajout de l'offre
+    } catch (err) {
+      setError('Erreur lors de l\'ajout de l\'offre.'); // Gestion d'erreur simple
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box 
       sx={{ 
         mb: 4, 
-        backgroundColor: 'rgba(255, 255, 255, 0.9)', 
         borderRadius: 3, 
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', 
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.4)', 
         padding: 3 
       }}
     >
@@ -21,6 +41,12 @@ const OfferForm = ({ newOffer, setNewOffer, handleAddOffer, handleBack }: {
         Créer une nouvelle offre
       </Typography>
       
+      {error && (
+        <Alert severity="error" sx={{ marginBottom: 2 }}>
+          {error}
+        </Alert>
+      )}
+
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
@@ -75,7 +101,8 @@ const OfferForm = ({ newOffer, setNewOffer, handleAddOffer, handleBack }: {
         <Grid item xs={12}>
           <Button 
             variant="contained" 
-            onClick={handleAddOffer} 
+            onClick={onSubmit} // Appel de la fonction de soumission
+            disabled={loading} // Désactiver le bouton pendant le chargement
             sx={{ 
               textTransform: 'none', 
               backgroundColor: '#6a1b9a', 
@@ -85,7 +112,7 @@ const OfferForm = ({ newOffer, setNewOffer, handleAddOffer, handleBack }: {
               borderRadius: 2, 
             }}
           >
-            Ajouter l'offre
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Ajouter l\'offre'}
           </Button>
         </Grid>
 

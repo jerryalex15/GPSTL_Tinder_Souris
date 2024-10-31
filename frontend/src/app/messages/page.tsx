@@ -49,7 +49,7 @@ const MessagingPage = () => {
 
   return <>
     <AppBarComponent isLoggedIn={true} />
-    <Box sx={{ display: 'flex', height: '100vh', paddingTop: 14, gap: 2 }}>
+    <Box sx={{ display: 'flex', height: '100vh', paddingTop: 8}}>
       {/* Ajuste 'marginTop' pour laisser de l'espace sous l'AppBar */}
       {/* Liste des conversations à gauche */}
       <ConversationList
@@ -59,12 +59,10 @@ const MessagingPage = () => {
 
       {/* Fenêtre de discussion à droite */}
       <Box
-        component={Paper}
-        elevation={3}
+      
         sx={{
           width: '70%',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          borderRadius: 3,
+          backgroundColor: 'rgb(255, 255, 255)',
           padding: 2,
           display: 'flex',
           flexDirection: 'column',

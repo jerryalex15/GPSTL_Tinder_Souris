@@ -104,7 +104,6 @@ function EditProfileForm({ formData, handleChange, handleSaveProfile }) {
       />
       <Button
         variant="contained"
-        color="primary"
         onClick={handleSaveProfile}
         sx={{
           mb: 2,

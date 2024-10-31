@@ -66,12 +66,12 @@ const EntreprisePage = () => {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
-
+        minWidth: '100vw',
       }}
     >
       <AppBarComponent isLoggedIn={true} />
 
-      <Container maxWidth="md" sx={{ paddingTop: 14, flex: 1 }}>
+      <Container sx={{ paddingTop: 14, flex: 1, backgroundColor:'rgb(255, 255, 255)',}}>
         {isCreatingOffer ? (
           <OfferForm
             newOffer={newOffer}

@@ -1,4 +1,4 @@
-import { List, ListItem, Card, CardContent, Typography, Button, Box } from '@mui/material';
+import { List, ListItem, Card, CardContent, Typography, Button, Box, CircularProgress } from '@mui/material';
 import { Application, applicationsByPosting, usePromise } from "@/app/api";
 
 const CandidateList = ({ offer, handleBackToOffers }: any) => {
@@ -27,6 +27,7 @@ const CandidateList = ({ offer, handleBackToOffers }: any) => {
           fontWeight: 'bold',
           '&:hover': { borderColor: '#5e35b1', color: '#5e35b1' },
         }}
+        aria-label="Retour aux offres"
       >
         Retour aux offres
       </Button>
@@ -39,6 +40,19 @@ const CandidateList = ({ offer, handleBackToOffers }: any) => {
         Candidats pour l'offre : {offer.title}
       </Typography>
 
+      {done === false && (
+        <CircularProgress sx={{ marginY: 4 }} />
+      )}
+
+      {error && (
+        <Typography
+          variant="body1"
+          sx={{ color: 'red', textAlign: 'center', marginY: 4 }}
+        >
+          Une erreur est survenue lors du chargement des candidats. Veuillez réessayer plus tard.
+        </Typography>
+      )}
+
       {candidates && candidates.length > 0 ? (
         <List sx={{ width: '100%', maxWidth: 800, padding: 0 }}>
           {candidates.map((candidate: Application) => (
@@ -49,12 +63,11 @@ const CandidateList = ({ offer, handleBackToOffers }: any) => {
               <Card
                 sx={{
                   width: '100%',
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)', // Fond semi-transparent pour correspondre au style
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                   borderRadius: 3,
                   padding: 2,
                   transition: 'transform 0.3s ease',
-                  '&:hover': { transform: 'scale(1.02)', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' }
+                  '&:hover': { transform: 'scale(1.0)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }
                 }}
               >
                 <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -73,6 +86,7 @@ const CandidateList = ({ offer, handleBackToOffers }: any) => {
                         textTransform: 'none',
                         '&:hover': { backgroundColor: '#5e35b1' },
                       }}
+                      aria-label={`Contacter ${candidate.student.user.email}`}
                     >
                       Contacter
                     </Button>
@@ -83,12 +97,14 @@ const CandidateList = ({ offer, handleBackToOffers }: any) => {
           ))}
         </List>
       ) : (
-        <Typography
-          variant="body1"
-          sx={{ color: '#757575', textAlign: 'center', marginY: 4 }}
-        >
-          Aucun candidat pour cette offre pour le moment. Revenez plus tard pour voir les mises à jour.
-        </Typography>
+        !error && (
+          <Typography
+            variant="body1"
+            sx={{ color: '#757575', textAlign: 'center', marginY: 4 }}
+          >
+            Aucun candidat pour cette offre pour le moment. Revenez plus tard pour voir les mises à jour.
+          </Typography>
+        )
       )}
     </Box>
   );

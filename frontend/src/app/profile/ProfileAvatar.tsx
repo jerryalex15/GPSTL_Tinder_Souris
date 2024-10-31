@@ -25,14 +25,16 @@ function ProfileAvatar({ user, previewAvatar, editing, handleChange }) {
               '&:hover': { bgcolor: '#7b1fa2' }, // Teinte au survol
               borderRadius: '12px',
               padding: 1,
+              display: 'flex',
+              alignItems: 'center',
             }}
           >
-            <Upload sx={{ color: '#fff' }} /> {/* Icône blanche */}
+            <Upload sx={{ color: '#fff', mr: 1 }} /> {/* Icône blanche avec un espacement */}
             <input hidden type="file" accept="image/*" name="avatarUrl" onChange={handleChange} />
+            <Typography variant="body2" sx={{ color: '#fff', fontWeight: 'bold' }}>
+              Changer la photo de profil
+            </Typography>
           </IconButton>
-          <Typography variant="body2" sx={{ mt: 1, color: '#555', fontWeight: 'bold' }}>
-            Changer la photo de profil
-          </Typography>
         </Box>
       )}
     </Box>

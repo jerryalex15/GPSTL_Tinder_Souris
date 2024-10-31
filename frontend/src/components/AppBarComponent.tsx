@@ -1,5 +1,5 @@
 import { AppBar, Toolbar, Button, Box, IconButton } from '@mui/material';
-import { AccountCircle, Mail } from '@mui/icons-material';
+import { AccountCircle, Mail,Home } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import DalleImage from '../../img/dalle.png';
@@ -25,14 +25,12 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({ isLoggedIn, profileTy
       position="fixed"
       sx={{
         background: 'rgba(0, 0, 0, 0.7)',
-        borderRadius: '16px',
+        height: '64px',
         boxShadow: 'none',
-        top: 20,
-        width: '90%',
-        maxWidth: '600px',
-        left: '50%',
-        transform: 'translateX(-50%)',
+        width: '100%',
         zIndex: 1100,
+        backdropFilter: 'blur(10px)', // Ajout du flou pour éviter de voir l'arrière du site
+
       }}
     >
       <Toolbar
@@ -49,6 +47,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({ isLoggedIn, profileTy
           </IconButton>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <IconButton onClick={handleLogoClick}>
+            <Home sx={{ color: '#FFF', fontSize: 30, marginRight: '10px' }} />
+          </IconButton>
           {isLoggedIn && (
             <IconButton onClick={() => router.push('/messages')}>
               <Mail sx={{ color: '#FFF', fontSize: 30, marginRight: '10px' }} />
