@@ -65,6 +65,33 @@ function fetchJSON(fetch: typeof fetchWithAuth) {
 const fetchWithAuthJSON = fetchJSON(fetchWithAuth);
 const fetchTryWithAuthJSON = fetchJSON(fetchTryWithAuth);
 
+// api.ts
+export async function fetchWithAuthJSON2(
+  url: string,
+  options: RequestInit
+): Promise<Response> {
+  const token = getAuthData()?.token; // Adjust based on your auth implementation
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    ...options.headers,
+  };
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  if (!response.ok) {
+    // Optionally, parse error message from response
+    const errorData = await response.json();
+    throw new Error(errorData.error || "API request failed");
+  }
+
+  return response;
+}
+
+
 export function logout() {
   window.localStorage.removeItem("authData");
 }
@@ -119,10 +146,35 @@ export async function getStudentPostings(): Promise<JobPosting[]> {
   return await fetchWithAuthJSON(`/api/match/student/${myId}/jobs`);
 }
 
-export async function applyToJob(jobId: number): Promise<void> {
-  let myId = getAuthData()?.userId;
-  return await fetchWithAuthJSON(`/api/applications/apply`, {method: "POST", body: {studentId: myId, jobPostingId: jobId}});
+export async function applyToJob(jobId: number, super_Like: boolean): Promise<void> {
+  const myId = getAuthData()?.userId;
+  if (!myId) {
+    throw new Error("User not authenticated");
+  }
+
+  if (typeof jobId !== 'number' || typeof super_Like !== 'boolean') {
+    throw new Error("Invalid input types for applying to job");
+  }
+
+  try {
+    const response = await fetchWithAuthJSON2(API_URL + `/api/applications/apply`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        studentId: myId,
+        jobPostingId: jobId,
+        superLike: super_Like,
+      }),
+    });
+
+    return;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to apply for job");
+  }
 }
+
 
 export async function getCompanyPostings(): Promise<JobPosting[]> {
   let myId = getAuthData()?.userId;

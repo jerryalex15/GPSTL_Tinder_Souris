@@ -1,17 +1,37 @@
+// src/pages/Home.tsx
 "use client";
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Box } from '@mui/material';
-import SwipeArea from './SwipeArea';
-import AppBarComponent from '../../components/AppBarComponent';
-import { applyToJob, getStudentPostings, JobPosting, usePromise } from "@/app/api";
+import { useState, useEffect } from "react";
+import {
+  Box,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  Typography,
+} from "@mui/material";
+import SwipeArea from "./SwipeArea";
+import MirageBackground from "../../components/MirageBackground"; // Import the MirageBackground component
+import AppBarComponent from "../../components/AppBarComponent";
+import {
+  applyToJob,
+  getStudentPostings,
+  JobPosting,
+  usePromise,
+} from "@/app/api";
+import backgroundimage from "../../../img/background.png";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
+    null
+  );
 
   const [done, jobs, error] = usePromise(getStudentPostings);
   const [cards, setCards] = useState<JobPosting[]>([]);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    "success" | "error" | "info" | "warning"
+  >("info");
 
   useEffect(() => {
     if (done && jobs) {
@@ -22,61 +42,159 @@ export default function Home() {
   useEffect(() => {
     setMounted(true);
 
-    // Désactiver le scroll lorsque le composant est monté
-    document.body.style.overflow = 'hidden';
+    // Disable scrolling when component is mounted
+    document.body.style.overflow = "hidden";
 
     return () => {
-      // Réactiver le scroll lors du démontage du composant
-      document.body.style.overflow = 'auto';
+      // Re-enable scrolling on unmount
+      document.body.style.overflow = "auto";
     };
   }, []);
 
-  const handleSwipe = (direction: 'left' | 'right', cardId: number) => {
-    setCards((prevCards) => prevCards.filter((card) => card.id !== cardId));
-    if (direction === 'right') {
-      applyToJob(cardId);
+  const handleSwipe = async (direction: "left" | "right", cardId: number) => {
+    if (direction === "left") {
+      setCards((prevCards) => prevCards.filter((card) => card.id !== cardId));
+      setSnackbarMessage("You disliked this job.");
+      setSnackbarSeverity("info");
+      setOpenSnackbar(true);
+    } else if (direction === "right") {
+      try {
+        await applyToJob(cardId, false); // Regular apply
+        setCards((prevCards) => prevCards.filter((card) => card.id !== cardId));
+        setSnackbarMessage("You applied to the job successfully.");
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
+      } catch (error) {
+        console.error("Apply to job failed", error);
+        setSnackbarMessage("Failed to apply to the job. Please try again.");
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+      }
     }
   };
 
   const swipeLeft = (cardId: number) => {
-    handleSwipe('left', cardId);
+    handleSwipe("left", cardId);
   };
 
   const swipeRight = (cardId: number) => {
-    handleSwipe('right', cardId);
+    handleSwipe("right", cardId);
+  };
+
+  const handleSuperLike = async (cardId: number) => {
+    try {
+      await applyToJob(cardId, true); // Super Like
+      setCards((prevCards) => prevCards.filter((card) => card.id !== cardId));
+      setSnackbarMessage("You super liked this job!");
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+    } catch (error: any) {
+      console.error("Super Like failed", error);
+      setSnackbarMessage("Super Like failed. Please try again.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleCloseSnackbar = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
   };
 
   if (!mounted) return null;
 
-  return <>
-    <AppBarComponent isLoggedIn={true} />
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        minHeight: '100vh',
-        padding: '20px',
-      }}
-    >
+  const user_role =
+    localStorage.getItem("role") === "student" ? "student" : "company";
 
+  return (
+    <>
+      <AppBarComponent isLoggedIn={true} profileType={user_role} />
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexGrow: 1, // Permet à ce Box de prendre l'espace restant
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          minHeight: "100vh",
+          padding: "20px",
+          position: "relative",
+          overflow: "hidden",
+          // Set the tile background
+          backgroundImage: backgroundimage,
+          backgroundRepeat: "repeat",
+          backgroundSize: "100px 100px", // Adjust based on tile image dimensions
+          // Optionally add a base background color for better contrast
+          backgroundColor: "#2a2a2a", // Lighter than previous #1a1a1a
         }}
       >
-        <SwipeArea
-          cards={cards}
-          onSwipeLeft={swipeLeft}
-          onSwipeRight={swipeRight}
-          swipeDirection={swipeDirection}
-          setSwipeDirection={setSwipeDirection}
-        />
+        {/* Mirage Background */}
+        <MirageBackground />
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            flexGrow: 1, // Let this Box take remaining space
+            position: "relative",
+            zIndex: 2, // Ensure content sits above the mirage effect
+          }}
+        >
+          {error && (
+            <Typography variant="h6" color="error">
+              Failed to load job postings. Please try again later.
+            </Typography>
+          )}
+
+          {!done && (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <CircularProgress />
+            </Box>
+          )}
+
+          {done && (
+            <SwipeArea
+              cards={cards}
+              onSwipeLeft={swipeLeft}
+              onSwipeRight={swipeRight}
+              onSuperLike={handleSuperLike} // Pass the Super Like handler
+              swipeDirection={swipeDirection}
+              setSwipeDirection={setSwipeDirection}
+            />
+          )}
+        </Box>
+
+        {/* Snackbar for Notifications */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Box>
-    </Box>
-  </>;
+
+      {/* Global Styles */}
+      <style jsx global>{`
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: "Roboto", sans-serif;
+          background-color: #2a2a2a; /* Match the backgroundColor in Box */
+        }
+      `}</style>
+    </>
+  );
 }

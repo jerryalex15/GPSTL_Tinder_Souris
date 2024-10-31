@@ -34,4 +34,7 @@ public class Application {
     @Column(nullable = false)
     private LocalDateTime appliedAt = LocalDateTime.now();
 
+    @Column(name = "super_like", nullable = false)
+    private Boolean superLike = false;
+
 }

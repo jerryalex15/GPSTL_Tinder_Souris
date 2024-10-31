@@ -8,4 +8,5 @@ import lombok.*;
 public class ApplicationRequestDTO {
     private Long studentId;
     private Long jobPostingId;
+    private Boolean superLike = false;
 }

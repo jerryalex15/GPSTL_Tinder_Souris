@@ -9,10 +9,11 @@ import com.gpstl.alternart.Repositories.ApplicationRepository;
 import com.gpstl.alternart.Repositories.JobPostingRepository;
 import com.gpstl.alternart.Repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,10 @@ public class ApplicationController {
     @PostMapping("/apply")
     //@PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<Application> applyToJob(@RequestBody ApplicationRequestDTO applicationRequestDTO) {
-        Long studentId = applicationRequestDTO.getStudentId();
+        Long userId = applicationRequestDTO.getStudentId();
+        Long studentId = studentRepository.findByUserId(userId)
+                .orElseThrow(
+                        () -> new RuntimeException("Student not found with User ID: " + userId) ).getId();
         Long jobPostingId = applicationRequestDTO.getJobPostingId();
 
         // Check if the application already exists
@@ -66,6 +70,8 @@ public class ApplicationController {
 
         application.setStudent(student);
         application.setJobPosting(jobPosting);
+        application.setStatus("pending");
+        application.setSuperLike(applicationRequestDTO.getSuperLike());
 
         Application savedApplication = applicationRepository.save(application);
         return ResponseEntity.ok(savedApplication);
@@ -130,5 +136,50 @@ public class ApplicationController {
         return responseMap;
     }
 
-    // TODO : Additional endpoints (update application status)
+
+    /**
+     * Get all applications for a job posting.
+     *
+     * @param jobPostingId The ID of the job posting.
+     * @return A list of applications.
+     */
+    @GetMapping("/job-posting/{jobPostingId}/applications/superliked")
+    public List<Application> getSuperLikedApplicationsForJob(Long jobPostingId) {
+        JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job Posting not found with ID: " + jobPostingId));
+
+        return new ArrayList<>(applicationRepository.findByJobPostingIdAndSuperLikeTrue(jobPosting.getId()));
+    }
+
+
+    /**
+     * Get all applications for a job posting.
+     *
+     * @param jobPostingId The ID of the job posting.
+     * @return A list of applications.
+     */
+    @GetMapping("/job-posting/{jobPostingId}/applications/regular")
+    public List<Application> getRegularApplicationsForJob(Long jobPostingId) {
+        JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job Posting not found with ID: " + jobPostingId));
+
+        return new ArrayList<>(applicationRepository.findByJobPostingIdAndSuperLikeFalse(jobPosting.getId()));
+    }
+
+    @GetMapping("/student/{studentId}")
+    public List<Application> getApplicationsByStudentId(@PathVariable Long studentId) {
+        return applicationRepository.findByStudentId(studentId);
+    }
+
+    @GetMapping("/job-posting/{jobPostingId}")
+    public List<Application> getApplicationsByJobPostingId(@PathVariable Long jobPostingId) {
+        return applicationRepository.findByJobPostingId(jobPostingId);
+    }
+
+    @GetMapping("/student/{studentId}/job-posting/{jobPostingId}")
+    public List<Application> getApplicationsByStudentIdAndJobPostingId(@PathVariable Long studentId, @PathVariable Long jobPostingId) {
+        return applicationRepository.findByStudentIdAndJobPostingId(studentId, jobPostingId);
+    }
+
+
 }
