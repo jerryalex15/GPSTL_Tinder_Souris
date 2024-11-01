@@ -65,6 +65,13 @@ public class JobPostingService {
                 .collect(Collectors.toList());
     }
 
+    public List<JobPostingResponse> getJobPostingsByCategory(Long categoryId) {
+        List<JobPosting> jobPostings = jobPostingRepository.findByCategories_Id(categoryId);
+        return jobPostings.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     public List<JobPostingResponse> getAllJobPostingsByCompany(Long companyId) {
         // query the database for all job postings by the company
 
