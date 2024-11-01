@@ -29,6 +29,7 @@ public class JobPostingController {
             // id of the company creating the job posting, need to get it using the userid
             Long company_UserID = jobPostingRequest.getCompanyId();
             Long companyID = jobPostingService.getCompanyID(company_UserID);
+            System.out.println("Je suis ici");
             jobPostingRequest.setCompanyId(companyID);
             JobPostingResponse response = jobPostingService.createJobPosting(jobPostingRequest);
             return ResponseEntity.ok(response);
@@ -47,6 +48,15 @@ public class JobPostingController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<JobPostingResponse>> getAllJobPostings() {
         List<JobPostingResponse> jobPostings = jobPostingService.getAllJobPostings();
+        return ResponseEntity.ok(jobPostings);
+    }
+
+    // Méthode de filtrage par catégorie
+    @GetMapping("/by-category")
+    //GET /api/job_postings/by-category?categoryId=<ID de la catégorie>
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<JobPostingResponse>> getJobPostingsByCategory(@RequestParam Long categoryId) {
+        List<JobPostingResponse> jobPostings = jobPostingService.getJobPostingsByCategory(categoryId);
         return ResponseEntity.ok(jobPostings);
     }
 
