@@ -153,12 +153,7 @@ export default function Home() {
           padding: "20px",
           position: "relative",
           overflow: "hidden",
-          // Set the tile background
-          backgroundImage: backgroundimage,
-          backgroundRepeat: "repeat",
-          backgroundSize: "100px 100px", // Adjust based on tile image dimensions
-          // Optionally add a base background color for better contrast
-          backgroundColor: "#2a2a2a", // Lighter than previous #1a1a1a
+
         }}
       >
         {/* Mirage Background */}

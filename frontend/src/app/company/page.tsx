@@ -71,7 +71,9 @@ const EntreprisePage = () => {
     >
       <AppBarComponent isLoggedIn={true} />
 
-      <Container sx={{ paddingTop: 14, flex: 1, backgroundColor:'rgb(255, 255, 255)',}}>
+
+
+      <Container sx={{ paddingTop: 15, flex: 1, backgroundColor:'rgb(255, 255, 255)',}}>
         {isCreatingOffer ? (
           <OfferForm
             newOffer={newOffer}
