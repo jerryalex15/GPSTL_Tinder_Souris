@@ -144,7 +144,7 @@ public class ApplicationController {
      * @return A list of applications.
      */
     @GetMapping("/job-posting/{jobPostingId}/applications/superliked")
-    public List<Application> getSuperLikedApplicationsForJob(Long jobPostingId) {
+    public List<Application> getSuperLikedApplicationsForJob(@PathVariable Long jobPostingId) {
         JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job Posting not found with ID: " + jobPostingId));
 
@@ -159,7 +159,7 @@ public class ApplicationController {
      * @return A list of applications.
      */
     @GetMapping("/job-posting/{jobPostingId}/applications/regular")
-    public List<Application> getRegularApplicationsForJob(Long jobPostingId) {
+    public List<Application> getRegularApplicationsForJob(@PathVariable Long jobPostingId) {
         JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job Posting not found with ID: " + jobPostingId));
 

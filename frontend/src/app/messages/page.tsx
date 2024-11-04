@@ -71,7 +71,7 @@ const MessagingPage = () => {
   };
 
   const user_role =
-    localStorage.getItem("role") === "student" ? "student" : "company";
+    typeof localStorage !== "undefined" && localStorage.getItem("role") === "student" ? "student" : "company";
 
   return (
     <>

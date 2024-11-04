@@ -147,32 +147,15 @@ export async function getStudentPostings(): Promise<JobPosting[]> {
 }
 
 export async function applyToJob(jobId: number, super_Like: boolean): Promise<void> {
-  const myId = getAuthData()?.userId;
-  if (!myId) {
-    throw new Error("User not authenticated");
-  }
-
-  if (typeof jobId !== 'number' || typeof super_Like !== 'boolean') {
-    throw new Error("Invalid input types for applying to job");
-  }
-
-  try {
-    const response = await fetchWithAuthJSON2(API_URL + `/api/applications/apply`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        studentId: myId,
-        jobPostingId: jobId,
-        superLike: super_Like,
-      }),
-    });
-
-    return;
-  } catch (error: any) {
-    throw new Error(error.message || "Failed to apply for job");
-  }
+  let myId = getAuthData()?.userId;
+  await fetchWithAuthJSON(`/api/applications/apply`, {
+    method: "POST",
+    body: {
+      studentId: myId,
+      jobPostingId: jobId,
+      superLike: super_Like,
+    },
+  });
 }
 
 
@@ -195,6 +178,14 @@ export type Application = {
 
 export async function applicationsByPosting(id: number): Promise<Application[]> {
   return await fetchWithAuthJSON(`/api/applications/${id}`);
+}
+
+export async function applicationsByPostingSuperLiked(id: number): Promise<Application[]> {
+  return await fetchWithAuthJSON(`/api/applications/job-posting/${id}/applications/superliked`);
+}
+
+export async function applicationsByPostingRegular(id: number): Promise<Application[]> {
+  return await fetchWithAuthJSON(`/api/applications/job-posting/${id}/applications/regular`);
 }
 
 export type Category = {

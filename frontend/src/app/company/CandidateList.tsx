@@ -1,8 +1,34 @@
-import { List, ListItem, Card, CardContent, Typography, Button, Box, CircularProgress } from '@mui/material';
-import { Application, applicationsByPosting, usePromise } from "@/app/api";
+import {
+  List,
+  ListItem,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Box,
+  CircularProgress,
+  IconButton
+} from '@mui/material';
+import {
+  Application,
+  applicationsByPosting,
+  applicationsByPostingRegular,
+  applicationsByPostingSuperLiked,
+  usePromise
+} from "@/app/api";
+import { Star } from "@mui/icons-material";
+import App from "next/app";
+import { useEffect, useState } from "react";
 
 const CandidateList = ({ offer, handleBackToOffers }: any) => {
-  const [done, candidates, error] = usePromise(() => applicationsByPosting(offer.id));
+  const [doneLiked, candidatesLiked, errorLiked] = usePromise(() => applicationsByPostingSuperLiked(offer.id));
+  const [doneRegular, candidatesRegular, errorRegular] = usePromise(() => applicationsByPostingRegular(offer.id));
+  const done = doneLiked && doneRegular;
+  const error = errorLiked || errorRegular;
+  const candidates: (Application & {superLike: boolean})[] = [
+    ...(candidatesLiked || []).map((c) => ({ ...c, superLike: true })),
+    ...(candidatesRegular || []).map((c) => ({ ...c, superLike: false })),
+  ];
 
   return (
     <Box
@@ -55,7 +81,7 @@ const CandidateList = ({ offer, handleBackToOffers }: any) => {
 
       {candidates && candidates.length > 0 ? (
         <List sx={{ width: '100%', maxWidth: 800, padding: 0 }}>
-          {candidates.map((candidate: Application) => (
+          {candidates.map((candidate) => (
             <ListItem
               key={candidate.id}
               sx={{ display: 'flex', justifyContent: 'center', padding: 0 }}
@@ -70,27 +96,46 @@ const CandidateList = ({ offer, handleBackToOffers }: any) => {
                   '&:hover': { transform: 'scale(1.0)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }
                 }}
               >
-                <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                    {candidate.student.user.email}
-                  </Typography>
-                  <Typography sx={{ color: '#757575' }}>
-                    Compétences : {candidate.student.keySkills}
-                  </Typography>
-                  <a href={`mailto:${candidate.student.user.email}`} style={{ textDecoration: 'none' }}>
-                    <Button
-                      variant="contained"
+                <CardContent className="flex items-center">
+                  <div className="flex flex-col grow">
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      {candidate.student.user.email}
+                    </Typography>
+                    <Typography sx={{ color: '#757575' }}>
+                      Compétences : {candidate.student.keySkills}
+                    </Typography>
+                    <a href={`mailto:${candidate.student.user.email}`} style={{ textDecoration: 'none' }}>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          alignSelf: 'flex-start',
+                          backgroundColor: '#673ab7',
+                          textTransform: 'none',
+                          '&:hover': { backgroundColor: '#5e35b1' },
+                        }}
+                        aria-label={`Contacter ${candidate.student.user.email}`}
+                      >
+                        Contacter
+                      </Button>
+                    </a>
+                  </div>
+                  <div>
+                    {candidate.superLike && <IconButton
+                      color="primary"
+                      aria-label="Super Like"
                       sx={{
-                        alignSelf: 'flex-start',
-                        backgroundColor: '#673ab7',
-                        textTransform: 'none',
-                        '&:hover': { backgroundColor: '#5e35b1' },
+                        backgroundColor: "rgba(0, 123, 255, 0.2)",
+                        "&:hover": { backgroundColor: "rgba(0, 123, 255, 0.4)" },
+                        transition: "background-color 0.3s",
+                        width: "60px",
+                        height: "60px",
+                        borderRadius: "50%",
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
                       }}
-                      aria-label={`Contacter ${candidate.student.user.email}`}
                     >
-                      Contacter
-                    </Button>
-                  </a>
+                      <Star fontSize="large" />
+                    </IconButton>}
+                  </div>
                 </CardContent>
               </Card>
             </ListItem>
