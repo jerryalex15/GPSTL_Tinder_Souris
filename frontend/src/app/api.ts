@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState,useCallback } from "react";
 
 type AuthData = {
   token: string,
@@ -56,7 +56,8 @@ function fetchJSON(fetch: typeof fetchWithAuth) {
     }
     let res = await fetch(url, init);
     if (!res.ok) {
-      throw new Error(await res.text());
+      const errorText = await res.text();
+      throw new Error(`Request to ${url} failed with status ${res.status}: ${errorText}`);
     }
     return res.json();
   }
@@ -114,19 +115,29 @@ export async function login(username: string, password: string): Promise<AuthDat
 }
 
 export type Role = "student" | "company" | "cfa";
-export async function register(
-  username: string, email: string, password: string, role: Role
-): Promise<void> {
+
+
+
+export async function register(username: string, email: string, password: string, role: Role): Promise<void> {
+  // Create user first
   let res = await fetch(`${API_URL}/auth/signup`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({username, email, password, role}),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, email, password, role }),
   });
+
   if (!res.ok) {
     throw new Error(await res.text());
   }
+
+  // redirect to the login page
+  
+  // Then login
+  let token = await login(username, password);
+  localStorage.setItem("authData", JSON.stringify(token));
+
+
+  return;
 }
 
 export type JobPosting = {
@@ -197,34 +208,95 @@ export async function applicationsByPosting(id: number): Promise<Application[]> 
   return await fetchWithAuthJSON(`/api/applications/${id}`);
 }
 
-export type Category = {
-  id: number,
-  name: string,
-};
+export async function getUserDetails(userId: number): Promise<{ id: number, name: string }> {
+  const token = getToken();
+  const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
 
-export async function getCategories(): Promise<Category[]> {
-  return await fetchWithAuthJSON(`/api/categories`);
+  const response = await fetch(`${API_URL}/auth/users/${userId}`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Request to get user details failed with status ${response.status}: ${errorText}`);
+  }
+
+  return await response.json();
 }
 
-export async function getPostingsByCategory(id: number): Promise<JobPosting[]> {
-  return await fetchWithAuthJSON(`/api/job_postings/by-category`, {body: {categoryId: id}});
-}
-
-export function usePromise<R>(promise: () => Promise<R>, dependencies: readonly unknown[] = []): [boolean, R | null, Error | null] {
+export function usePromise<R>(promiseFn: () => Promise<R>): [boolean, R | null, Error | null] {
   let [result, setResult] = useState<R | null>(null);
   let [error, setError] = useState<Error | null>(null);
   let [done, setDone] = useState(false);
+
+  const stablePromiseFn = useCallback(() => {
+    if (typeof promiseFn === 'function') {
+      return promiseFn();
+    } else {
+      return Promise.reject(new Error("promiseFn is not a function"));
+    }
+  }, [promiseFn]);
+
   useEffect(() => {
-    setDone(false);
-    setResult(null);
-    setError(null);
-    promise().then(r => {
+    stablePromiseFn().then(r => {
       setResult(r);
       setDone(true);
     }).catch(e => {
       setError(e);
       setDone(true);
     });
-  }, dependencies);
+  }, [stablePromiseFn]);
+
   return [done, result, error];
+}
+
+export type ChatMessage = {
+  id?: number;
+  senderId: number;
+  receiverId: number;
+  message: string;
+  timestamp?: string;
+};
+
+export async function sendChatMessage(message: ChatMessage): Promise<ChatMessage> {
+  return await fetchWithAuthJSON('/api/chat/send', {
+    method: 'POST',
+    body: message
+  });
+}
+
+export async function getUserMessages(userId: number): Promise<ChatMessage[]> {
+  return await fetchWithAuthJSON(`/api/chat/messages/${userId}`);
+}
+
+
+export async function getCategories(): Promise<any[]> {
+  return await fetchWithAuthJSON(`/api/categories`);
+}
+
+export async function getPostingsByCategory(categoryId: number): Promise<JobPosting[]> {
+  return await fetchWithAuthJSON(`/api/job_postings/category/${categoryId}`);
+}
+
+export type Category = {
+  id: number,
+  name: string,
+};
+
+
+export async function updateProfile(formData: FormData): Promise<void> {
+  const token = getToken();
+  const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+
+  const response = await fetch(`${API_URL}/profile`, {
+    method: "PUT",
+    headers,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Request to update profile failed with status ${response.status}: ${errorText}`);
+  }
 }

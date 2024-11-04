@@ -12,7 +12,7 @@ public class StudentDTO {
     private Long id;
     @Nonnull
     private Long userId;
-    private String cvLink;
+    private byte[] cvLink;
     private String videoPresentationLink;
     private String portfolioLink;
     private String keySkills;

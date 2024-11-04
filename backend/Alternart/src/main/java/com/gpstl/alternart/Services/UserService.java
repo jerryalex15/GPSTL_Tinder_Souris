@@ -47,11 +47,20 @@ public class UserService {
             StudentDTO studentDTO = new StudentDTO();
             studentDTO.setUserId(user.getId());
             studentDTO.setKeySkills("");
-            studentDTO.setCvLink("");
+            studentDTO.setCvLink(null);
             studentDTO.setCategoryIds(List.of());
             studentDTO.setVideoPresentationLink("");
             studentDTO.setPortfolioLink("");
             studentService.createStudent(studentDTO);
+        }
+        if (Objects.equals(user.getRole(), "company")) {
+            CompanyDTO companyDTO = new CompanyDTO();
+            companyDTO.setUserId(user.getId());
+            companyDTO.setCompanyName("");
+            companyDTO.setPhoto(null);
+            companyDTO.setDescription("");
+            companyDTO.setPerks("");
+            companyService.createCompany(companyDTO);
         }
 
         return user.getId();
@@ -79,5 +88,9 @@ public class UserService {
     public Optional<String> getRoleOfUser(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         return user.map(User::getRole);
+    }
+
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findById(userId);
     }
 }

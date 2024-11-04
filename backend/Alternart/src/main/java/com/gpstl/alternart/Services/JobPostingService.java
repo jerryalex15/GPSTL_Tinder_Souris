@@ -53,6 +53,8 @@ public class JobPostingService {
         jobPosting.setRequiredSkills(jobPostingRequest.getRequiredSkills());
         jobPosting.setCategories(categories);
 
+
+        System.out.println("JobPostingService.java: jobPostingRequest.getCategoryIds() = " + jobPostingRequest.getCategoryIds());
         JobPosting savedJobPosting = jobPostingRepository.save(jobPosting);
 
         return mapToResponse(savedJobPosting);

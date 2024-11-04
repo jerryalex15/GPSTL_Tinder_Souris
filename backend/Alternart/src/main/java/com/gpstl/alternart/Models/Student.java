@@ -25,7 +25,9 @@ public class Student {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private String cvLink;
+    @Lob
+    @Column
+    private byte[] cv;  // Byte array to store the CV
     private String videoPresentationLink;
     private String portfolioLink;
 

@@ -12,7 +12,10 @@ import SwipeArea from "./SwipeArea";
 import MirageBackground from "../../components/MirageBackground"; // Import the MirageBackground component
 import AppBarComponent from "../../components/AppBarComponent";
 import {
-  applyToJob, Category, getCategories, getPostingsByCategory,
+  applyToJob,
+  Category,
+  getCategories,
+  getPostingsByCategory,
   getStudentPostings,
   JobPosting,
   usePromise,
@@ -20,21 +23,43 @@ import {
 import backgroundimage from "../../../img/background.png";
 import { CategoryList } from "../company/CategoryList";
 
+const cache = new Map<string, any>();
+
+async function getCachedData<T>(
+  key: string,
+  fetchFn: () => Promise<T>
+): Promise<T> {
+  if (cache.has(key)) {
+    return cache.get(key);
+  }
+  const data = await fetchFn();
+  cache.set(key, data);
+  return data;
+}
+
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
     null
   );
-  const [categoriesDone, categories, categoriesError] = usePromise(getCategories);
+  const [categoriesDone, categories, categoriesError] = usePromise(() =>
+    getCachedData("categories", getCategories)
+  );
   const [chosenCategories, setChosenCategories] = useState<Category[]>([]);
 
   const [done, jobs, error] = usePromise<JobPosting[]>(() => {
     if (chosenCategories.length === 0) {
-      return getStudentPostings();
+      return getCachedData("studentPostings", getStudentPostings);
     } else {
-      return Promise.all(chosenCategories.map((category) => getPostingsByCategory(category.id))).then(r => r.flat());
+      const categoryPromises = chosenCategories.map((category) =>
+        getCachedData(`category_${category.id}`, () =>
+          getPostingsByCategory(category.id)
+        )
+      );
+      return Promise.all(categoryPromises).then((r) => r.flat());
     }
-  }, [chosenCategories]);
+  });
+
   const [cards, setCards] = useState<JobPosting[]>([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -141,7 +166,7 @@ export default function Home() {
         }}
       >
         {/* Mirage Background */}
-        <MirageBackground/>
+        <MirageBackground />
 
         <Box
           sx={{
@@ -155,7 +180,10 @@ export default function Home() {
           }}
         >
           <div className="flex flex-wrap justify-center max-w-[400px]">
-            <CategoryList chosenCategories={chosenCategories} setChosenCategories={setChosenCategories} />
+            <CategoryList
+              chosenCategories={chosenCategories}
+              setChosenCategories={setChosenCategories}
+            />
           </div>
 
           {error && (
@@ -166,7 +194,7 @@ export default function Home() {
 
           {!done && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <CircularProgress/>
+              <CircularProgress />
             </Box>
           )}
 
@@ -201,11 +229,11 @@ export default function Home() {
 
       {/* Global Styles */}
       <style jsx global>{`
-          body {
-              margin: 0;
-              padding: 0;
-              font-family: "Roboto", sans-serif;
-              background-color: #2a2a2a; /* Match the backgroundColor in Box */
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: "Roboto", sans-serif;
+          background-color: #2a2a2a; /* Match the backgroundColor in Box */
         }
       `}</style>
     </>
