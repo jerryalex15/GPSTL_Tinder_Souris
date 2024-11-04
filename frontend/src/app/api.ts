@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type AuthData = {
   token: string,
@@ -197,11 +197,27 @@ export async function applicationsByPosting(id: number): Promise<Application[]> 
   return await fetchWithAuthJSON(`/api/applications/${id}`);
 }
 
-export function usePromise<R>(promise: () => Promise<R>): [boolean, R | null, Error | null] {
+export type Category = {
+  id: number,
+  name: string,
+};
+
+export async function getCategories(): Promise<Category[]> {
+  return await fetchWithAuthJSON(`/api/categories`);
+}
+
+export async function getPostingsByCategory(id: number): Promise<JobPosting[]> {
+  return await fetchWithAuthJSON(`/api/job_postings/by-category`, {body: {categoryId: id}});
+}
+
+export function usePromise<R>(promise: () => Promise<R>, dependencies: readonly unknown[] = []): [boolean, R | null, Error | null] {
   let [result, setResult] = useState<R | null>(null);
   let [error, setError] = useState<Error | null>(null);
   let [done, setDone] = useState(false);
   useEffect(() => {
+    setDone(false);
+    setResult(null);
+    setError(null);
     promise().then(r => {
       setResult(r);
       setDone(true);
@@ -209,6 +225,6 @@ export function usePromise<R>(promise: () => Promise<R>): [boolean, R | null, Er
       setError(e);
       setDone(true);
     });
-  }, []);
+  }, dependencies);
   return [done, result, error];
 }

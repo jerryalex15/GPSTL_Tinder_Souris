@@ -12,7 +12,7 @@ import SwipeArea from "./SwipeArea";
 import MirageBackground from "../../components/MirageBackground"; // Import the MirageBackground component
 import AppBarComponent from "../../components/AppBarComponent";
 import {
-  applyToJob,
+  applyToJob, Category, getCategories, getPostingsByCategory,
   getStudentPostings,
   JobPosting,
   usePromise,
@@ -24,8 +24,16 @@ export default function Home() {
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
     null
   );
+  const [categoriesDone, categories, categoriesError] = usePromise(getCategories);
+  const [chosenCategories, setChosenCategories] = useState<Category[]>([]);
 
-  const [done, jobs, error] = usePromise(getStudentPostings);
+  const [done, jobs, error] = usePromise<JobPosting[]>(() => {
+    if (chosenCategories.length === 0) {
+      return getStudentPostings();
+    } else {
+      return Promise.all(chosenCategories.map((category) => getPostingsByCategory(category.id))).then(r => r.flat());
+    }
+  }, [chosenCategories]);
   const [cards, setCards] = useState<JobPosting[]>([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -132,7 +140,7 @@ export default function Home() {
         }}
       >
         {/* Mirage Background */}
-        <MirageBackground />
+        <MirageBackground/>
 
         <Box
           sx={{
@@ -145,6 +153,20 @@ export default function Home() {
             zIndex: 2, // Ensure content sits above the mirage effect
           }}
         >
+          <div className="flex flex-wrap justify-center max-w-[400px]">
+            {categoriesDone && categories && categories.map((category) => <div
+              key={category.id}
+              className={"rounded-md p-2 m-1" + (chosenCategories.includes(category) ? " bg-white text-black" : " bg-gray-800 text-white")}
+              onClick={() => {
+                if (chosenCategories.includes(category)) {
+                  setChosenCategories(chosenCategories.filter((c) => c !== category));
+                } else {
+                  setChosenCategories([...chosenCategories, category]);
+                }
+              }}
+            >{category.name}</div>)}
+          </div>
+
           {error && (
             <Typography variant="h6" color="error">
               Failed to load job postings. Please try again later.
@@ -153,7 +175,7 @@ export default function Home() {
 
           {!done && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <CircularProgress />
+              <CircularProgress/>
             </Box>
           )}
 
@@ -188,11 +210,11 @@ export default function Home() {
 
       {/* Global Styles */}
       <style jsx global>{`
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: "Roboto", sans-serif;
-          background-color: #2a2a2a; /* Match the backgroundColor in Box */
+          body {
+              margin: 0;
+              padding: 0;
+              font-family: "Roboto", sans-serif;
+              background-color: #2a2a2a; /* Match the backgroundColor in Box */
         }
       `}</style>
     </>
