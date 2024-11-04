@@ -31,6 +31,11 @@ public class ApplicationController {
     @Autowired
     private StudentRepository studentRepository;
 
+    /**
+     * Get all applications.
+     *
+     * @return A list of all applications.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<List<Application>> applicationsToJob(@PathVariable Long id) {
         return ResponseEntity.ok(applicationRepository.findAll().stream().filter(app -> app.getJobPosting().getId().equals(id)).toList());
@@ -56,7 +61,12 @@ public class ApplicationController {
                 .anyMatch(app -> app.getJobPosting().getId().equals(jobPostingId));
 
         if (exists) {
-            return ResponseEntity.badRequest().build();
+            Application app = applicationRepository.findByStudentId(studentId).stream()
+                    .filter(a -> a.getJobPosting().getId().equals(jobPostingId))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Application not found for student with ID: " + studentId + " and job posting ID: " + jobPostingId));
+
+            return ResponseEntity.ok(app);
         }
 
         Application application = new Application();
@@ -153,7 +163,7 @@ public class ApplicationController {
 
 
     /**
-     * Get all applications for a job posting.
+     * Get all regular applications for a job posting.
      *
      * @param jobPostingId The ID of the job posting.
      * @return A list of applications.

@@ -42,7 +42,7 @@ public class MatchingService  {
         Set<Category> studentCategories = student.getCategories();
 
         List<JobPosting> matchingJobs = jobPostingRepository.findAll().stream()
-                //.filter(job -> job.getCategories().stream().anyMatch(studentCategories::contains))
+                .filter(job -> job.getCategories().stream().anyMatch(studentCategories::contains))
                 .toList();
 
         return matchingJobs.stream()
@@ -88,7 +88,7 @@ public class MatchingService  {
         return new StudentDTO(
                 student.getId(),
                 student.getUser().getId(),
-                student.getCvLink(),
+                student.getCv(),
                 student.getVideoPresentationLink(),
                 student.getPortfolioLink(),
                 student.getKeySkills(),

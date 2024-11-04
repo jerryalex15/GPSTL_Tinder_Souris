@@ -1,9 +1,9 @@
 // components/MessageInput.js
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField, Button } from "@mui/material";
 
 const MessageInput = ({ newMessage, setNewMessage, handleSendMessage }) => {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
       <TextField
         variant="outlined"
         fullWidth
@@ -11,10 +11,10 @@ const MessageInput = ({ newMessage, setNewMessage, handleSendMessage }) => {
         value={newMessage}
         onChange={(e) => setNewMessage(e.target.value)}
         sx={{
-          backgroundColor: '#fff',
-          borderRadius: '10px',
-          '& .MuiOutlinedInput-root': {
-            borderRadius: '10px',
+          backgroundColor: "#fff",
+          borderRadius: "10px",
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "10px",
           },
         }}
       />
@@ -22,7 +22,7 @@ const MessageInput = ({ newMessage, setNewMessage, handleSendMessage }) => {
         variant="contained"
         color="secondary"
         onClick={handleSendMessage}
-        sx={{ marginLeft: 2, padding: '10px 20px' }}
+        sx={{ marginLeft: 2, padding: "10px 20px" }}
       >
         Send
       </Button>

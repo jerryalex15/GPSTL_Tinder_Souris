@@ -2,9 +2,11 @@ package com.gpstl.alternart.Controllers;
 
 import com.gpstl.alternart.Dto.SignInRequest;
 import com.gpstl.alternart.Dto.SignupRequest;
+import com.gpstl.alternart.Models.User;
 import com.gpstl.alternart.Services.UserService;
 import com.gpstl.alternart.Utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -75,5 +77,17 @@ public class AuthController {
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<Map<String, Object>> getUserDetails(@PathVariable Long userId) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", user.getId());
+        response.put("name", user.getUsername());
+
+        return ResponseEntity.ok(response);
     }
 }

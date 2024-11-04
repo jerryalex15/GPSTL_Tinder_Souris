@@ -44,7 +44,14 @@ public class CompanyService {
      * @return An Optional containing the CompanyDTO if found.
      */
     public Optional<CompanyDTO> getCompanyById(Long id) {
-        return companyRepository.findById(id).map(this::convertToDTO);
+       // return companyRepository.findById(id).map(this::convertToDTO);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+
+        Optional<CompanyDTO> company = companyRepository.findById(user.getId()).map(this::convertToDTO);
+
+        return company;
+
     }
 
     /**
@@ -64,6 +71,8 @@ public class CompanyService {
 
         // Map DTO to Entity
         Company company = mapToEntity(companyDTO, user);
+
+
 
         // Save the Company entity
         Company savedCompany = companyRepository.save(company);
@@ -128,7 +137,8 @@ public class CompanyService {
                 company.getCompanyName(),
                 company.getLogoUrl(),
                 company.getDescription(),
-                company.getPerks()
+                company.getPerks(),
+                null
         );
     }
 

@@ -57,13 +57,13 @@ public class StudentService {
         Student student = mapToEntity(studentDTO, user);
 
         // Handle Categories if provided
-//        if (studentDTO.getCategoryIds() != null && !studentDTO.getCategoryIds().isEmpty()) {
-//            Set<Category> categories = new HashSet<>(categoryRepository.findAllById(studentDTO.getCategoryIds()));
-//            if (categories.size() != studentDTO.getCategoryIds().size()) {
-//                throw new ResourceNotFoundException("One or more categories not found.");
-//            }
-//            student.setCategories(categories);
-//        }
+        if (studentDTO.getCategoryIds() != null && !studentDTO.getCategoryIds().isEmpty()) {
+            Set<Category> categories = new HashSet<>(categoryRepository.findAllById(studentDTO.getCategoryIds()));
+            if (categories.size() != studentDTO.getCategoryIds().size()) {
+                throw new ResourceNotFoundException("One or more categories not found.");
+            }
+            student.setCategories(categories);
+        }
 
 
         // for mvp purposes, we will only allow students to be assigned to all categories
@@ -72,9 +72,11 @@ public class StudentService {
         student.setCategories(categories);
 
 
+
+
+
         // Save the Student entity
         Student savedStudent = studentRepository.save(student);
-
         // Map Entity back to DTO
         return mapToDTO(savedStudent);
     }
@@ -86,8 +88,16 @@ public class StudentService {
      * @return An Optional containing the StudentDTO if found.
      */
     public Optional<StudentDTO> getStudentById(Long id) {
-        return studentRepository.findById(id)
-                .map(this::mapToDTO);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+
+        StudentDTO studentDTO = studentRepository.findByUserId(id)
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with User ID: " + id));
+
+
+
+        return Optional.of(studentDTO);
     }
 
     /**
@@ -96,8 +106,8 @@ public class StudentService {
      * @return A list of all StudentDTOs.
      */
     public List<StudentDTO> getAllStudents() {
-        return studentRepository.findAll()
-                .stream()
+        List<Student> students = studentRepository.findAll();
+        return students.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
@@ -122,7 +132,7 @@ public class StudentService {
                     }
 
                     // Update fields
-                    existingStudent.setCvLink(studentDTO.getCvLink());
+                    existingStudent.setCv(studentDTO.getCvLink());
                     existingStudent.setVideoPresentationLink(studentDTO.getVideoPresentationLink());
                     existingStudent.setPortfolioLink(studentDTO.getPortfolioLink());
                     existingStudent.setKeySkills(studentDTO.getKeySkills());
@@ -136,6 +146,7 @@ public class StudentService {
                         }
                         existingStudent.setCategories(categories);
                     }
+
 
                     // Save the updated student
                     Student updatedStudent = studentRepository.save(existingStudent);
@@ -172,7 +183,7 @@ public class StudentService {
         return new StudentDTO(
                 student.getId(),
                 student.getUser().getId(),
-                student.getCvLink(),
+                student.getCv(),
                 student.getVideoPresentationLink(),
                 student.getPortfolioLink(),
                 student.getKeySkills(),
@@ -190,7 +201,7 @@ public class StudentService {
     private Student mapToEntity(StudentDTO studentDTO, User user) {
         Student student = new Student();
         student.setUser(user);
-        student.setCvLink(studentDTO.getCvLink());
+        student.setCv(studentDTO.getCvLink());
         student.setVideoPresentationLink(studentDTO.getVideoPresentationLink());
         student.setPortfolioLink(studentDTO.getPortfolioLink());
         student.setKeySkills(studentDTO.getKeySkills());

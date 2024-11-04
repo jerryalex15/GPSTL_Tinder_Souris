@@ -56,7 +56,8 @@ function fetchJSON(fetch: typeof fetchWithAuth) {
     }
     let res = await fetch(url, init);
     if (!res.ok) {
-      throw new Error(await res.text());
+      const errorText = await res.text();
+      throw new Error(`Request to ${url} failed with status ${res.status}: ${errorText}`);
     }
     return res.json();
   }
@@ -66,30 +67,6 @@ const fetchWithAuthJSON = fetchJSON(fetchWithAuth);
 const fetchTryWithAuthJSON = fetchJSON(fetchTryWithAuth);
 
 // api.ts
-export async function fetchWithAuthJSON2(
-  url: string,
-  options: RequestInit
-): Promise<Response> {
-  const token = getAuthData()?.token; // Adjust based on your auth implementation
-
-  const headers = {
-    'Authorization': `Bearer ${token}`,
-    ...options.headers,
-  };
-
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
-
-  if (!response.ok) {
-    // Optionally, parse error message from response
-    const errorData = await response.json();
-    throw new Error(errorData.error || "API request failed");
-  }
-
-  return response;
-}
 
 
 export function logout() {
@@ -124,9 +101,19 @@ export async function register(
     },
     body: JSON.stringify({username, email, password, role}),
   });
+
   if (!res.ok) {
     throw new Error(await res.text());
   }
+
+  // redirect to the login page
+
+  // Then login
+  let token = await login(username, password);
+  localStorage.setItem("authData", JSON.stringify(token));
+
+
+  return;
 }
 
 export type JobPosting = {
@@ -188,17 +175,21 @@ export async function applicationsByPostingRegular(id: number): Promise<Applicat
   return await fetchWithAuthJSON(`/api/applications/job-posting/${id}/applications/regular`);
 }
 
-export type Category = {
-  id: number,
-  name: string,
-};
+export async function getUserDetails(userId: number): Promise<{ id: number, name: string }> {
+  const token = getToken();
+  const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
 
-export async function getCategories(): Promise<Category[]> {
-  return await fetchWithAuthJSON(`/api/categories`);
-}
+  const response = await fetch(`${API_URL}/auth/users/${userId}`, {
+    method: "GET",
+    headers,
+  });
 
-export async function getPostingsByCategory(id: number): Promise<JobPosting[]> {
-  return await fetchWithAuthJSON(`/api/job_postings/by-category`, {body: {categoryId: id}});
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Request to get user details failed with status ${response.status}: ${errorText}`);
+  }
+
+  return await response.json();
 }
 
 export function usePromise<R>(promise: () => Promise<R>, dependencies: readonly unknown[] = []): [boolean, R | null, Error | null] {
@@ -218,4 +209,54 @@ export function usePromise<R>(promise: () => Promise<R>, dependencies: readonly 
     });
   }, dependencies);
   return [done, result, error];
+}
+
+export type ChatMessage = {
+  id?: number;
+  senderId: number;
+  receiverId: number;
+  message: string;
+  timestamp?: string;
+};
+
+export async function sendChatMessage(message: ChatMessage): Promise<ChatMessage> {
+  return await fetchWithAuthJSON('/api/chat/send', {
+    method: 'POST',
+    body: message
+  });
+}
+
+export async function getUserMessages(userId: number): Promise<ChatMessage[]> {
+  return await fetchWithAuthJSON(`/api/chat/messages/${userId}`);
+}
+
+
+export async function getCategories(): Promise<any[]> {
+  return await fetchWithAuthJSON(`/api/categories`);
+}
+
+export async function getPostingsByCategory(categoryId: number): Promise<JobPosting[]> {
+  return await fetchWithAuthJSON(`/api/job_postings/category/${categoryId}`);
+}
+
+export type Category = {
+  id: number,
+  name: string,
+};
+
+
+export async function updateProfile(formData: FormData): Promise<void> {
+  const token = getToken();
+  const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+
+  const response = await fetch(`${API_URL}/profile`, {
+    method: "PUT",
+    headers,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Request to update profile failed with status ${response.status}: ${errorText}`);
+  }
 }

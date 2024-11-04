@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CompanyDTO {
     private Long id;
-    private Long userId; // Assuming you want to expose user ID
+    private Long userId;
     private String companyName;
     private String logoUrl;
     private String description;
     private String perks;
+
+    private byte[] photo;
 }
