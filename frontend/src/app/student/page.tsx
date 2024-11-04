@@ -25,7 +25,6 @@ export default function Home() {
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
     null
   );
-  const [categoriesDone, categories, categoriesError] = usePromise(getCategories);
   const [chosenCategories, setChosenCategories] = useState<Category[]>([]);
 
   const [done, jobs, error] = usePromise<JobPosting[]>(() => {

@@ -11,14 +11,11 @@ import {
 } from '@mui/material';
 import {
   Application,
-  applicationsByPosting,
   applicationsByPostingRegular,
   applicationsByPostingSuperLiked,
   usePromise
 } from "@/app/api";
 import { Star } from "@mui/icons-material";
-import App from "next/app";
-import { useEffect, useState } from "react";
 
 const CandidateList = ({ offer, handleBackToOffers }: any) => {
   const [doneLiked, candidatesLiked, errorLiked] = usePromise(() => applicationsByPostingSuperLiked(offer.id));

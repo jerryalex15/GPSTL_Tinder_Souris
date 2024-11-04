@@ -1,7 +1,8 @@
 import { AppBar, Toolbar, Button, Box, IconButton } from '@mui/material';
-import { AccountCircle, Mail,Home } from '@mui/icons-material';
+import { AccountCircle, Mail, Home, Star } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import DalleImage from '../../img/dalle.png';
 
 interface AppBarComponentProps {
@@ -47,7 +48,25 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({ isLoggedIn, profileTy
           </IconButton>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <IconButton onClick={handleLogoClick}>
+          <Link href="/superlikes" className={"h-full flex items-center cursor-pointer mr-2"}>
+            <div>10x</div>
+            <IconButton
+              color="primary"
+              aria-label="Super Like"
+              sx={{
+                backgroundColor: "rgba(0, 123, 255, 0.2)",
+                "&:hover": { backgroundColor: "rgba(0, 123, 255, 0.4)" },
+                transition: "background-color 0.3s",
+                width: "30px",
+                height: "30px",
+                borderRadius: "50%",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <Star fontSize="medium" />
+            </IconButton>
+          </Link>
+          <IconButton onClick={handleLogoClick}>
             <Home sx={{ color: '#FFF', fontSize: 30, marginRight: '10px' }} />
           </IconButton>
           {isLoggedIn && (
