@@ -1,6 +1,7 @@
 import { Box, Button, TextField, Typography, Grid, CircularProgress, Alert } from '@mui/material';
-import { JobPosting, JobPostingCreation } from "@/app/api";
-import { useState } from 'react';
+import { Category, JobPosting, JobPostingCreation } from "@/app/api";
+import { useEffect, useState } from 'react';
+import { CategoryList } from "@/app/company/CategoryList";
 
 const OfferForm = ({
   newOffer,
@@ -15,6 +16,11 @@ const OfferForm = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [chosenCategories, setChosenCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    setNewOffer((prev) => ({ ...prev, categories: chosenCategories.map((c) => c.id) }));
+  }, [chosenCategories]);
 
   const onSubmit = async () => {
     setLoading(true);
@@ -57,7 +63,7 @@ const OfferForm = ({
             margin="normal"
             variant="outlined"
             required
-            sx={{ 
+            sx={{
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
                   borderColor: '#6a1b9a',
@@ -82,7 +88,7 @@ const OfferForm = ({
             margin="normal"
             variant="outlined"
             required
-            sx={{ 
+            sx={{
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
                   borderColor: '#6a1b9a',
@@ -98,37 +104,41 @@ const OfferForm = ({
           />
         </Grid>
 
+        <div className="flex flex-wrap justify-center">
+          <CategoryList chosenCategories={chosenCategories} setChosenCategories={setChosenCategories}/>
+        </div>
+
         <Grid item xs={12}>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={onSubmit} // Appel de la fonction de soumission
             disabled={loading} // Désactiver le bouton pendant le chargement
-            sx={{ 
-              textTransform: 'none', 
-              backgroundColor: '#6a1b9a', 
+            sx={{
+              textTransform: 'none',
+              backgroundColor: '#6a1b9a',
               '&:hover': {
                 backgroundColor: '#ab47bc',
               },
-              borderRadius: 2, 
+              borderRadius: 2,
             }}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Ajouter l\'offre'}
+            {loading ? <CircularProgress size={24} color="inherit"/> : 'Ajouter l\'offre'}
           </Button>
         </Grid>
 
         {/* Ajout du bouton Retour */}
         <Grid item xs={12}>
-          <Button 
-            variant="outlined" 
-            onClick={handleBack} 
-            sx={{ 
-              textTransform: 'none', 
+          <Button
+            variant="outlined"
+            onClick={handleBack}
+            sx={{
+              textTransform: 'none',
               color: '#6a1b9a',
               borderColor: '#6a1b9a',
               '&:hover': {
                 borderColor: '#ab47bc',
               },
-              borderRadius: 2, 
+              borderRadius: 2,
             }}
           >
             Retour

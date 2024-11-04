@@ -18,6 +18,7 @@ import {
   usePromise,
 } from "@/app/api";
 import backgroundimage from "../../../img/background.png";
+import { CategoryList } from "../company/CategoryList";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -154,17 +155,7 @@ export default function Home() {
           }}
         >
           <div className="flex flex-wrap justify-center max-w-[400px]">
-            {categoriesDone && categories && categories.map((category) => <div
-              key={category.id}
-              className={"rounded-md p-2 m-1" + (chosenCategories.includes(category) ? " bg-white text-black" : " bg-gray-800 text-white")}
-              onClick={() => {
-                if (chosenCategories.includes(category)) {
-                  setChosenCategories(chosenCategories.filter((c) => c !== category));
-                } else {
-                  setChosenCategories([...chosenCategories, category]);
-                }
-              }}
-            >{category.name}</div>)}
+            <CategoryList chosenCategories={chosenCategories} setChosenCategories={setChosenCategories} />
           </div>
 
           {error && (

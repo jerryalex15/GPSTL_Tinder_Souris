@@ -40,7 +40,7 @@ const EntreprisePage = () => {
   const handleAddOffer = () => {
     if (true) {
       createJobPosting(newOffer);
-      const newId = offers.length + 10000;
+      const newId = offers.length + 1000000;
       setOffers([...offers, { id: newId, createdAt: new Date().toLocaleDateString(), ...newOffer }]);
       setNewOffer(emptyOffer);
       setIsCreatingOffer(false);
